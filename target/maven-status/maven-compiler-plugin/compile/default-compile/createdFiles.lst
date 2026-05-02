@@ -1,0 +1,7 @@
+config\conexion.class
+controlador\loginServlet.class
+modelo\usuario.class
+com\mycompany\ventatickets\JakartaRestConfiguration.class
+controlador\registroServlet.class
+com\mycompany\ventatickets\resources\JakartaEE8Resource.class
+datos\usuarioDAO.class
