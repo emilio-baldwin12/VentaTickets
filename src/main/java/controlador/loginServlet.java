@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import redis.clients.jedis.Jedis;
+import config.conexionRedis;
 
 /**
  *
@@ -32,6 +34,15 @@ public class loginServlet extends HttpServlet {
             response.sendRedirect("index.jsp");
         } else {
             response.sendRedirect("login.jsp?error=1");
+        }
+        
+        
+        try (Jedis jedis=conexionRedis.getConnection()){// Probando Redis
+            jedis.set("ultima_conexion",correo);
+            jedis.expire("ultima_conexion", 60);
+            System.out.println("Dato guardado en redis");
+        }catch (Exception e){
+            System.out.println("Error al conectar con redis: " +e.getMessage());
         }
     }
 }

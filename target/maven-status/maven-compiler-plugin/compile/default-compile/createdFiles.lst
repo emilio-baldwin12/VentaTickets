@@ -4,4 +4,5 @@ modelo\usuario.class
 com\mycompany\ventatickets\JakartaRestConfiguration.class
 controlador\registroServlet.class
 com\mycompany\ventatickets\resources\JakartaEE8Resource.class
+config\conexionRedis.class
 datos\usuarioDAO.class
