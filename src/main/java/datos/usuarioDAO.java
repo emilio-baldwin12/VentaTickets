@@ -64,4 +64,47 @@ public class usuarioDAO {
         }
         return loginExitoso;
     }
+
+
+public boolean registrar(usuario u, String generoFavorito) {
+        String sqlUser = "INSERT INTO usuarios (nombre, apellido, correo, contrasena, telefono, pais, tipo_usuario) VALUES (?, ?, ?, ?, ?, ?, 'CLIENTE')";
+        String sqlCliente = "INSERT INTO clientes (id_usuario, generoFavorito) VALUES (?, ?)";
+        
+        Connection conn = null;
+        try {
+            conn = conexion.getConnection();
+            conn.setAutoCommit(false); 
+            
+            PreparedStatement psUser = conn.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS);
+            psUser.setString(1, u.getnombre());
+            psUser.setString(2, u.getapellido());
+            psUser.setString(3, u.getcorreo());
+            psUser.setString(4, u.getcontrasenia()); 
+            psUser.setString(5, u.gettelefono());
+            psUser.setString(6, u.getpais());
+            psUser.executeUpdate();
+            
+            ResultSet rs = psUser.getGeneratedKeys();
+            int nuevoId = 0;
+            if (rs.next()) {
+                nuevoId = rs.getInt(1); 
+            }
+            
+            PreparedStatement psCliente = conn.prepareStatement(sqlCliente);
+            psCliente.setInt(1, nuevoId);
+            psCliente.setString(2, generoFavorito);
+            psCliente.executeUpdate();
+            
+            conn.commit(); 
+            return true;
+            
+        } catch (Exception e) {
+            if (conn != null) { 
+                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } 
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+        }
+    }
 }

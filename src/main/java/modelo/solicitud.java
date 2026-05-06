@@ -62,7 +62,7 @@ public class solicitud {
         return fecha;
     }
     
-    public void setmotivo(Timestamp fecha){
+    public void setfecha(Timestamp fecha){
         this.fecha=fecha;
     }
 }
