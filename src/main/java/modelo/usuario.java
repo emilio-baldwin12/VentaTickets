@@ -14,6 +14,10 @@ public class usuario {
     private String telefono;
     private String pais;
     
+    public usuario(){
+        
+    }
+    
     public usuario(int id, String nombre, String apellido,String correo ,String contrasenia,String telefono,String pais){
         this.id=id;
         this.nombre=nombre;
