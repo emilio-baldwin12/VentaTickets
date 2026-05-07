@@ -1,6 +1,7 @@
 
 package controlador;
 
+import datos.usuarioDAO;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,10 +28,16 @@ public class registroServlet extends HttpServlet {
         String tel = request.getParameter("telefono");
         String pai = request.getParameter("pais");
 
-        usuario nuevoUsuario = new usuario(0, nom, ape, mail, pas, tel, pai);
-
-        System.out.println("Se ha recibido a: " + nuevoUsuario.getnombre() + " " + nuevoUsuario.getapellido());
-
-        response.sendRedirect("index.jsp?vista=login");
+        usuario nuevoUsuario = new usuario(0, nom, ape, mail, pas, tel, pai,"CLIENTE");
+        
+        usuarioDAO dao=new usuarioDAO();
+        int filasInsertadas=dao.registrar(nuevoUsuario);
+        
+        if(filasInsertadas >0){
+            System.out.println("Registro exitoso: " + mail);
+            response.sendRedirect("login.jsp?registro=sucess");
+        }else{
+            response.sendRedirect("registro.jsp?error=1");
+        }
     }
 }

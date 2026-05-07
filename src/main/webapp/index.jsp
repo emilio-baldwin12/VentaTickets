@@ -1,3 +1,4 @@
+<%@page import="datos.solicitudDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -7,10 +8,10 @@
     <style>
         :root {
             --bg-blue: #8EACB8;  /* Azul OR */
-            --entity-header: #1A1A1A; /* Negro  */
+            --entity-header: #1A1A1A; /* Negro */
             --entity-body: #E8E2D1;   /* Crema */
             --accent-pink: #FFB6C1;   /* Rosa */
-            --accent-green: #90EE90;  /* Verde  */
+            --accent-green: #90EE90;  /* Verde */
         }
 
         body { 
@@ -20,14 +21,26 @@
             color: #333;
         }
 
-        header {
+        /* --- HEADER ESTILO TICKETMASTER --- */
+        .main-header {
             background-color: var(--entity-header);
-            padding: 15px 40px;
+            color: white;
+            padding: 0 40px;
+            display: flex;
+            flex-direction: column; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            height: 70px;
         }
+
         .logo { 
             font-size: 30px; 
             font-weight: bold; 
@@ -35,22 +48,80 @@
             text-decoration: none; 
             letter-spacing: 2px;
         }
-        .nav-btns a {
+
+        /* --- ACCIONES DE USUARIO --- */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
             text-decoration: none;
-            padding: 10px 25px;
-            border-radius: 4px;
+            font-size: 13px;
             font-weight: bold;
-            margin-left: 10px;
+            transition: 0.3s;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .action-item:hover { color: var(--accent-pink); }
+
+        /* Buscador integrado (Sin cajas blancas) */
+        .search-trigger {
+            background: #2A2A2A;
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            color: #888;
+            font-size: 12px;
+        }
+
+        /* --- NAVEGACIÓN INFERIOR --- */
+        .main-nav {
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            margin: 0;
+            padding: 12px 0;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
             transition: 0.3s;
         }
-        .btn-login { background-color: var(--accent-pink); color: #333; }
-        .btn-reg { background-color: var(--accent-green); color: #333; }
-        .btn-login:hover, .btn-reg:hover { filter: brightness(0.9); }
 
+        .nav-links a:hover { color: var(--accent-pink); }
+
+        /* Notificaciones Badge */
+        .badge {
+            background-color: #ff4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 7px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+
+        /* --- CONTENIDO --- */
         .main-wrapper {
             display: flex;
             max-width: 1200px;
-            margin: 40px auto;
+            margin: 30px auto;
             gap: 25px;
             padding: 0 20px;
         }
@@ -59,118 +130,140 @@
         .sidebar { flex: 1; }
 
         .section-title { 
-            font-size: 20px; 
-            font-weight: bold; 
-            margin-bottom: 25px; 
-            color: white;
-            background: var(--entity-header);
-            padding: 10px 20px;
-            display: inline-block;
-            border-radius: 4px 4px 0 0;
+            font-size: 18px; font-weight: bold; margin-bottom: 20px; 
+            color: white; background: var(--entity-header);
+            padding: 8px 15px; display: inline-block; border-radius: 4px;
         }
         
         .event-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
+            gap: 20px;
         }
 
         .event-card {
             background: var(--entity-body);
             border: 2px solid var(--entity-header);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
+            border-radius: 8px; overflow: hidden; transition: 0.3s;
+            display: flex; flex-direction: column;
         }
+
         .event-card:hover { transform: scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        
-        .event-header { 
-            background: var(--entity-header); 
-            color: white; 
-            padding: 10px; 
-            text-align: center; 
-            font-weight: bold;
-            font-size: 14px;
-        }
-        
-        .event-info { padding: 20px; border-top: 1px solid #ccc; }
-        .event-info h3 { font-size: 18px; margin: 0 0 10px 0; color: #1a1a1a; }
-        .event-info p { font-size: 14px; color: #555; margin: 0; }
+        .event-header { background: var(--entity-header); color: white; padding: 10px; text-align: center; font-size: 13px; font-weight: bold;}
+        .event-info { padding: 15px; border-top: 1px solid #ccc; }
+        .event-info h3 { font-size: 16px; margin: 0 0 8px 0; color: #111; }
+        .event-info p { font-size: 13px; color: #444; margin: 2px 0; }
 
         .side-card {
-            background: var(--entity-body);
-            border: 2px solid var(--entity-header);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            background: var(--entity-body); border: 2px solid var(--entity-header);
+            padding: 20px; border-radius: 8px; margin-bottom: 20px;
         }
-        .side-card h4 { 
-            margin-top: 0; 
-            color: var(--entity-header); 
-            border-bottom: 2px solid var(--entity-header); 
-            padding-bottom: 5px; 
-        }
+        .side-card h4 { margin-top: 0; border-bottom: 2px solid var(--entity-header); padding-bottom: 5px; }
     </style>
 </head>
 <body>
 
-    <header>
+<%
+    // Lógica de sesión y notificaciones
+    String tipoUser = (String) session.getAttribute("tipo_usuario");
+    String nombreUser = (String) session.getAttribute("nombreUsuario");
+    int pendientes = 0;
+    
+    if("ADMIN".equals(tipoUser)) {
+        pendientes = new solicitudDAO().contarPendientes();
+    }
+%>
+
+<header class="main-header">
+    <div class="header-top">
         <a href="index.jsp" class="logo">TICKETS</a>
-        <div class="nav-btns">
-            <a href="login.jsp" class="btn-login">INICIAR SESION</a>
-            <a href="registro.jsp" class="btn-reg">REGISTRARSE</a>
-        </div>
-    </header>
 
-    <div class="main-wrapper">
-        
-        <div class="content-main">
-            <div class="section-title">LO MAS BUSCADO</div>
+        <div class="user-actions">
+            <a href="#" class="action-item search-trigger">
+                <span></span> BUSCAR ARTISTA O EVENTO
+            </a>
+
+            <a href="notificaciones.jsp" class="action-item">
+                NOTIFICACIONES 
+                <% if(pendientes > 0) { %><span class="badge"><%= pendientes %></span><% } %>
+            </a>
+
+            <div class="profile-menu-container" onclick="toggleMenu()">
+                <a class="action-item">
+                    PERFIL <%= (nombreUser != null) ? "(" + nombreUser.toUpperCase() + ")" : "" %> ▾
+                </a>
+            </div>
+
+            <a href="configuracion.jsp" class="action-item">CONFIGURACIÓN</a>
             
-            <div class="event-grid">
-                <div class="event-card">
-                    <div class="event-header">ARTISTA : ID_01</div>
-                    <div class="event-info">
-                        <h3>Vans Warped Tour</h3>
-                        <p>> Autodromo Hnos. Rodriguez</p>
-                        <p>> Fecha: 15/06/2026</p>
-                    </div>
-                </div>
-
-                <div class="event-card">
-                    <div class="event-header">ATRISTA : ID_02</div>
-                    <div class="event-info">
-                        <h3>Mentiras, El Musical</h3>
-                        <p>> Teatro Aldama</p>
-                        <p>> Disponibilidad: Alta</p>
-                    </div>
-                </div>
-
-                <div class="event-card">
-                    <div class="event-header">ARTISTA : ID_03</div>
-                    <div class="event-info">
-                        <h3>Zayn</h3>
-                        <p>> Estadio GNP Seguros</p>
-                        <p>> Estado: Preventa</p>
-                    </div>
-                </div>
-            </div>
+            <% if(nombreUser == null) { %>
+                <a href="login.jsp" class="action-item" style="color: var(--accent-green)">Ingresa</a>
+            <% } %>
         </div>
-
-        <div class="sidebar">
-            <div class="side-card">
-                <h4>SISTEMA</h4>
-                <p>Bienvenido al vendedor de boletos derrocador</p>
-            </div>
-            <div class="side-card" style="border-color: var(--accent-pink);">
-                <h4 style="color: #d81b60;">EXPERIENCIAS+</h4>
-                <p>Consulta los paquetes VIP disponibles para ID_03</p>
-            </div>
-        </div>
-
     </div>
+
+    <nav class="main-nav">
+        <ul class="nav-links">
+            <li><a href="index.jsp">INICIO</a></li>
+            <li><a href="conciertos.jsp">CONCIERTOS</a></li>
+            <li><a href="artistas.jsp">ARTISTAS</a></li>
+            <li><a href="productos.jsp">PRODUCTOS</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="main-wrapper">
+    <div class="content-main">
+        <div class="section-title">LO MÁS BUSCADO</div>
+        
+        <div class="event-grid">
+            <div class="event-card">
+                <div class="event-header">ARTISTA : ID_01</div>
+                <div class="event-info">
+                    <h3>Vans Warped Tour</h3>
+                    <p>> Autodromo Hnos. Rodriguez</p>
+                    <p>> Fecha: 15/06/2026</p>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-header">ARTISTA : ID_02</div>
+                <div class="event-info">
+                    <h3>Mentiras, El Musical</h3>
+                    <p>> Teatro Aldama</p>
+                    <p>> Disponibilidad: Alta</p>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-header">ARTISTA : ID_03</div>
+                <div class="event-info">
+                    <h3>Zayn</h3>
+                    <p>> Estadio GNP Seguros</p>
+                    <p>> Estado: Preventa</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="side-card">
+            <h4>SISTEMA</h4>
+            <p>Bienvenido al vendedor de boletos derrocador.</p>
+        </div>
+        <div class="side-card" style="border-color: var(--accent-pink);">
+            <h4 style="color: #d81b60;">EXPERIENCIAS+</h4>
+            <p>Consulta los paquetes VIP disponibles para ID_03.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleMenu() {
+        // Aquí llamarías a la función que ya tenías para el Sidebar Disney+
+        alert("Abriendo menú de perfil...");
+    }
+</script>
 
 </body>
 </html>

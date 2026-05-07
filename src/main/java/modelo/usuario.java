@@ -10,22 +10,23 @@ public class usuario {
     private String nombre;
     private String apellido;
     private String correo;
-    private String contrasenia;
+    private String contrasena;
     private String telefono;
     private String pais;
+    private String tipousuario;
     
     public usuario(){
-        
     }
     
-    public usuario(int id, String nombre, String apellido,String correo ,String contrasenia,String telefono,String pais){
+    public usuario(int id, String nombre, String apellido,String correo ,String contrasena,String telefono,String pais,String tipousuario){
         this.id=id;
         this.nombre=nombre;
         this.apellido=apellido;
         this.correo=correo;
-        this.contrasenia=contrasenia;
+        this.contrasena=contrasena;
         this.telefono=telefono;
         this.pais=pais;
+        this.tipousuario=tipousuario;
     }
     public int getID(){
         return id;
@@ -55,11 +56,11 @@ public class usuario {
         this.correo=correo;
     }
     
-    public String getcontrasenia(){
-        return contrasenia;
+    public String getcontrasena(){
+        return contrasena;
     }
-    public void setcontrasenia(String contrasenia){
-        this.contrasenia=contrasenia;
+    public void setcontrasena(String contrasena){
+        this.contrasena=contrasena;
     }
     
     public String gettelefono(){
@@ -74,5 +75,12 @@ public class usuario {
     }
     public void setpais(String pais){
         this.pais=pais;
+    }
+    
+     public String gettipousuario(){
+        return tipousuario;
+    }
+    public void settipousuario(String tipousuario){
+        this.tipousuario=tipousuario;
     }
 }

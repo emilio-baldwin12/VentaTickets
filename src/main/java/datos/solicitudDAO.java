@@ -78,4 +78,17 @@ public boolean aprobarArtista(int idusuario,String genero, String descripcion){
         return false;
     }
     }
+
+
+    public int contarPendientes() {
+        String sql = "SELECT COUNT(*) FROM solicitudes WHERE estado = 'PENDIENTE'";
+        try (Connection conn = config.conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+        }
+        return 0;
+    }
 }

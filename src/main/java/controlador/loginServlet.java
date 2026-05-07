@@ -1,6 +1,8 @@
 
 package controlador;
 
+import datos.usuarioDAO;
+import modelo.usuario;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,25 +26,29 @@ public class loginServlet extends HttpServlet {
         
         String correo = request.getParameter("correo");
         String pass = request.getParameter("pass");
+        
+        usuarioDAO dao= new usuarioDAO();
+        usuario user=dao.validar(correo,pass);
 
-        System.out.println("Intento de login con: " + correo);
 
-        if (correo != null && pass != null) {
+        if (user!=null) {
             HttpSession sesion = request.getSession();
-            sesion.setAttribute("usuarioLogueado", correo);
-
+            sesion.setAttribute("idusuario", user.getID());
+            sesion.setAttribute("nombreusuario", user.getnombre());
+            sesion.setAttribute("correo", user.getcorreo());
+            sesion.setAttribute("pais", user.getpais());
+            sesion.setAttribute("tipousuario",user.gettipousuario());
+            
+            try (Jedis jedis=conexionRedis.getConnection()){// Probando Redis
+                jedis.set("ultima_conexion" + user.getID(),correo);
+                jedis.expire("ultima_conexion" + user.getID(), 60);
+                System.out.println("Dato guardado en redis" + user.getID());
+            }catch (Exception e){
+                System.out.println("Error al conectar con redis: " +e.getMessage());
+            }
             response.sendRedirect("index.jsp");
-        } else {
+    }else{
             response.sendRedirect("login.jsp?error=1");
-        }
-        
-        
-        try (Jedis jedis=conexionRedis.getConnection()){// Probando Redis
-            jedis.set("ultima_conexion",correo);
-            jedis.expire("ultima_conexion", 60);
-            System.out.println("Dato guardado en redis");
-        }catch (Exception e){
-            System.out.println("Error al conectar con redis: " +e.getMessage());
         }
     }
 }
