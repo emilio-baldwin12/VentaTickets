@@ -21,7 +21,6 @@
             color: #333;
         }
 
-        /* --- HEADER ESTILO TICKETMASTER --- */
         .main-header {
             background-color: var(--entity-header);
             color: white;
@@ -49,7 +48,6 @@
             letter-spacing: 2px;
         }
 
-        /* --- ACCIONES DE USUARIO --- */
         .user-actions {
             display: flex;
             align-items: center;
@@ -71,7 +69,6 @@
 
         .action-item:hover { color: var(--accent-pink); }
 
-        /* Buscador integrado (Sin cajas blancas) */
         .search-trigger {
             background: #2A2A2A;
             padding: 8px 15px;
@@ -81,7 +78,6 @@
             font-size: 12px;
         }
 
-        /* --- NAVEGACIÓN INFERIOR --- */
         .main-nav {
             border-top: 1px solid #333;
             display: flex;
@@ -107,7 +103,6 @@
 
         .nav-links a:hover { color: var(--accent-pink); }
 
-        /* Notificaciones Badge */
         .badge {
             background-color: #ff4444;
             color: white;
@@ -117,7 +112,6 @@
             margin-left: 5px;
         }
 
-        /* --- CONTENIDO --- */
         .main-wrapper {
             display: flex;
             max-width: 1200px;
@@ -130,9 +124,14 @@
         .sidebar { flex: 1; }
 
         .section-title { 
-            font-size: 18px; font-weight: bold; margin-bottom: 20px; 
-            color: white; background: var(--entity-header);
-            padding: 8px 15px; display: inline-block; border-radius: 4px;
+            font-size: 18px; 
+            font-weight: bold;
+            margin-bottom: 20px; 
+            color: white;
+            background: var(--entity-header);
+            padding: 8px 15px; 
+            display: inline-block; 
+            border-radius: 4px;
         }
         
         .event-grid {
@@ -144,27 +143,57 @@
         .event-card {
             background: var(--entity-body);
             border: 2px solid var(--entity-header);
-            border-radius: 8px; overflow: hidden; transition: 0.3s;
-            display: flex; flex-direction: column;
+            border-radius: 8px; 
+            overflow: hidden; 
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
         }
 
-        .event-card:hover { transform: scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .event-header { background: var(--entity-header); color: white; padding: 10px; text-align: center; font-size: 13px; font-weight: bold;}
-        .event-info { padding: 15px; border-top: 1px solid #ccc; }
-        .event-info h3 { font-size: 16px; margin: 0 0 8px 0; color: #111; }
-        .event-info p { font-size: 13px; color: #444; margin: 2px 0; }
+        .event-card:hover { 
+            transform: scale(1.02); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .event-header { 
+            background: var(--entity-header); 
+            color: white; 
+            padding: 10px; 
+            text-align: center; 
+            font-size: 13px; 
+            font-weight: bold;
+        }
+        .event-info { 
+            padding: 15px; 
+            border-top: 1px solid #ccc; 
+        }
+        .event-info h3 { 
+            font-size: 16px; 
+            margin: 0 0 8px 0; 
+            color: #111; 
+        }
+        .event-info p { 
+            font-size: 13px; 
+            color: #444; 
+            margin: 2px 0; 
+        }
 
         .side-card {
-            background: var(--entity-body); border: 2px solid var(--entity-header);
-            padding: 20px; border-radius: 8px; margin-bottom: 20px;
+            background: var(--entity-body);
+            border: 2px solid var(--entity-header);
+            padding: 20px;
+            border-radius: 8px; 
+            margin-bottom: 20px;
         }
-        .side-card h4 { margin-top: 0; border-bottom: 2px solid var(--entity-header); padding-bottom: 5px; }
+        .side-card h4 { 
+            margin-top: 0; 
+            border-bottom: 2px solid var(--entity-header); 
+            padding-bottom: 5px; 
+        }
     </style>
 </head>
 <body>
 
 <%
-    // Lógica de sesión y notificaciones
     String tipoUser = (String) session.getAttribute("tipo_usuario");
     String nombreUser = (String) session.getAttribute("nombreUsuario");
     int pendientes = 0;
@@ -206,7 +235,7 @@
         <ul class="nav-links">
             <li><a href="index.jsp">INICIO</a></li>
             <li><a href="conciertos.jsp">CONCIERTOS</a></li>
-            <li><a href="artistas.jsp">ARTISTAS</a></li>
+            <li><a href="artista.jsp">ARTISTAS</a></li>
             <li><a href="productos.jsp">PRODUCTOS</a></li>
         </ul>
     </nav>
@@ -260,7 +289,6 @@
 
 <script>
     function toggleMenu() {
-        // Aquí llamarías a la función que ya tenías para el Sidebar Disney+
         alert("Abriendo menú de perfil...");
     }
 </script>

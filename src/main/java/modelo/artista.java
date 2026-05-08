@@ -6,18 +6,19 @@ package modelo;
  * @author luise
  */
 public class artista extends usuario{
-    private String generoMusical;
+    private String genero;
     private String descripcion;
+    private String foto;
     
     public artista(){
         super();
     }
-    public String getgeneroMusical(){
-        return generoMusical;
+    public String getgenero(){
+        return genero;
     }
     
-    public void setgeneroMusical(String generoMusical){
-        this.generoMusical=generoMusical;
+    public void setgenero(String genero){
+        this.genero=genero;
     }
     
     public String getdescripcion(){
@@ -26,5 +27,13 @@ public class artista extends usuario{
     
     public void setdescripcion(String descripcion){
         this.descripcion=descripcion;
+    }
+    
+    public String getfoto(){
+        return foto;
+    }
+    
+    public void setfoto(String foto){
+        this.foto=foto;
     }
 }

@@ -2,11 +2,13 @@ config\conexion.class
 controlador\loginServlet.class
 modelo\usuario.class
 controlador\registroServlet.class
+datos\artistaDAO.class
 datos\solicitudDAO.class
 modelo\notificacion.class
 com\mycompany\ventatickets\resources\JakartaEE8Resource.class
 datos\usuarioDAO.class
 com\mycompany\ventatickets\JakartaRestConfiguration.class
+controlador\artistaServlet.class
 datos\notificacionDAO.class
 modelo\cliente.class
 config\conexionRedis.class
