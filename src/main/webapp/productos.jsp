@@ -1,14 +1,18 @@
-<%@page import="modelo.artista"%>
+<%-- 
+    Document   : productos
+    Created on : 8 may 2026, 10:03:25 p.m.
+    Author     : luise
+--%>
+
+<%@page import="modelo.producto"%>
 <%@page import="java.util.List"%>
-<%@page import="datos.artistaDAO"%>
-<%@page import="datos.solicitudDAO"%> 
+<%@page import="datos.productosDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Tickets | Nuestros Artistas</title>
-    <style>
+    <title>Tickets | Productos</title>
+<style>
         :root {
             --bg-blue: #8EACB8;
             --entity-header: #1A1A1A;
@@ -174,20 +178,13 @@
             border-radius: 8px; 
             border: 2px dashed var(--entity-header); 
         }
-    </style>
-</head>
+    </style></head>
 <body>
-
-<%
+    <%
     String nombreUser = (String) session.getAttribute("nombreusuario");
     String tipoUser = (String) session.getAttribute("tipousuario");
     int pendientes = 0;
-    
-    if("ADMIN".equals(tipoUser)) {
-        pendientes = new solicitudDAO().contarPendientes();
-    }
 %>
-
     <header class="main-header">
         <div class="header-top">
             <a href="index.jsp" class="logo">TICKETS</a>
@@ -217,39 +214,33 @@
             </ul>
         </nav>
     </header>
-
     <div class="main-wrapper">
-        <div class="section-title">NUESTROS ARTISTAS</div>
+        <div class="section-title">MERCH OFICIAL</div>
+        
         <div class="artist-grid">
             <%
-                artistaDAO dao = new artistaDAO();
-                List<artista> lista = dao.obtenerArtistas();
+                productosDAO dao = new productosDAO();
+                List<producto> lista = dao.obtenerProductos();
+                for(producto p : lista) {
+            %>
+            <%
+                String fotoPath = (p.getfoto() != null && !p.getfoto().isEmpty()) 
+                            ? p.getfoto() : "default_productos.jpg";
+            %>
 
-                if (lista != null && !lista.isEmpty()) {
-                    for (artista art : lista) {
-                        String apellido = (art.getapellido() != null) ? art.getapellido() : "";
-                        String fotoPath = (art.getfoto() != null && !art.getfoto().isEmpty()) 
-                                          ? art.getfoto() : "default_artist.jpg";
-            %>
                 <div class="artist-card">
-                    <div class="card-header">GÉNERO: <%= art.getgenero() %></div>
-                    <img src="img/artistas/<%= fotoPath %>" class="artist-img" alt="<%= art.getnombre() %>">
+                    <div class="card-header">STOCK: <%= p.getcantidad() %> unidades</div>
+
+                    <img src="img/productos/<%= fotoPath %>" class="artist-img" alt="<%= p.getnombre() %>">
+
                     <div class="artist-info">
-                        <h3><%= art.getnombre() %> <%= apellido %></h3>
-                        <p>> EXPLORAR EVENTOS</p>
+                        <h3><%= p.getnombre() %></h3>
+                        <p style="color: #d32f2f; font-size: 18px;">$ <%= p.getprecio() %></p>
+                        <p style="margin-top: 10px; cursor: pointer;">> AGREGAR AL CARRITO</p>
                     </div>
-                </div>
-            <% 
-                    }
-                } else { 
-            %>
-                <div class="no-data">
-                    <h3>Aun no hay artistas registrados</h3>
-                    <p>Vuelve mas tarde para conocer a nuestros talentos</p>
                 </div>
             <% } %>
         </div>
     </div>
-
 </body>
 </html>

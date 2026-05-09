@@ -1,7 +1,7 @@
 <%@page import="modelo.artista"%>
 <%@page import="java.util.List"%>
 <%@page import="datos.artistaDAO"%>
-<%@page import="datos.solicitudDAO"%> <%-- Agregamos este para el badge --%>
+<%@page import="datos.solicitudDAO"%> 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>

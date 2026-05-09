@@ -7,6 +7,8 @@ datos\solicitudDAO.class
 modelo\notificacion.class
 com\mycompany\ventatickets\resources\JakartaEE8Resource.class
 datos\usuarioDAO.class
+datos\productosDAO.class
+modelo\producto.class
 com\mycompany\ventatickets\JakartaRestConfiguration.class
 controlador\artistaServlet.class
 datos\notificacionDAO.class
