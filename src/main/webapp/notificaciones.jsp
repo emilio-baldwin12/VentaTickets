@@ -24,7 +24,6 @@
             color: #333;
         }
 
-        /* --- HEADER ESTILO INDEX (TICKETMASTER) --- */
         .main-header {
             background-color: var(--entity-header);
             color: white;
@@ -117,7 +116,6 @@
             margin-left: 5px;
         }
 
-        /* --- ESTILOS ESPECÍFICOS DE NOTIFICACIONES --- */
         .tab-container { 
             max-width: 900px; 
             margin: 40px auto; 
@@ -179,7 +177,6 @@
 <body>
 
 <%
-    // Recuperamos datos con los nombres EXACTOS de tu Servlet
     Object idObj = session.getAttribute("idusuario");
     String rol = (String) session.getAttribute("tipousuario");
     String nombreUser = (String) session.getAttribute("nombreusuario");
@@ -192,11 +189,9 @@
     int idUser = (int) idObj;
     String tipousuario = (rol != null) ? rol : "CLIENTE";
 
-    // Cargamos notificaciones
     notificacionDAO daoNotis = new notificacionDAO();
     List<notificacion> lista = daoNotis.obtenerNotis(idUser, tipousuario);
     
-    // Conteo para el Badge del Header (Solo si es ADMIN)
     int pendientes = 0;
     if("ADMIN".equals(tipousuario)) {
         pendientes = new solicitudDAO().contarPendientes();
@@ -235,7 +230,7 @@
         <ul class="nav-links">
             <li><a href="index.jsp">INICIO</a></li>
             <li><a href="conciertos.jsp">CONCIERTOS</a></li>
-            <li><a href="artistas.jsp">ARTISTAS</a></li>
+            <li><a href="artista.jsp">ARTISTAS</a></li>
             <li><a href="productos.jsp">PRODUCTOS</a></li>
         </ul>
     </nav>
@@ -253,7 +248,7 @@
     <div class="notif-body">
         <% if(lista == null || lista.isEmpty()) { %>
             <div style="text-align:center; padding: 50px; color:#777;">
-                <span style="font-size: 50px;">🔔</span>
+                <span style="font-size: 50px;"></span>
                 <p>No tienes notificaciones por el momento.</p>
             </div>
         <% } else { 
