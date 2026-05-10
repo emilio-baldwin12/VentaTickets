@@ -18,4 +18,5 @@ modelo\solicitud.class
 controlador\filaServlet.class
 modelo\artista.class
 datos\filaDAO.class
+modelo\cancion.class
 modelo\administrador.class

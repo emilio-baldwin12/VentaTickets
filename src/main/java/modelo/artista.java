@@ -9,6 +9,8 @@ public class artista extends usuario{
     private String genero;
     private String descripcion;
     private String foto;
+    private String banner;
+    private int total_seguidores;
     
     public artista(){
         super();
@@ -35,5 +37,19 @@ public class artista extends usuario{
     
     public void setfoto(String foto){
         this.foto=foto;
+    }
+    
+    public String getbanner(){
+        return banner;
+    }
+    public void setbanner(String banner){
+        this.banner=banner;
+    }
+    
+    public int gettotal_seguidores(){
+        return total_seguidores;
+    }
+    public void settotal_seguidores(int total_seguidores){
+        this.total_seguidores=total_seguidores;
     }
 }

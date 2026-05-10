@@ -174,6 +174,7 @@
             border-radius: 8px; 
             border: 2px dashed var(--entity-header); 
         }
+
     </style>
 </head>
 <body>
@@ -188,23 +189,19 @@
     }
 %>
 
-    <header class="main-header">
+   <header class="main-header">
         <div class="header-top">
             <a href="index.jsp" class="logo">TICKETS</a>
             <div class="user-actions">
-                <a href="#" class="action-item search-trigger">BUSCAR ARTISTA O EVENTO</a>
+                <a href="#" class="action-item">BUSCAR</a>
                 <a href="notificaciones.jsp" class="action-item">
-                    NOTIFICACIONES 
-                    <% if(pendientes > 0) { %><span class="badge"><%= pendientes %></span><% } %>
+                    NOTIFICACIONES <% if(pendientes > 0) { %><span class="badge"><%= pendientes %></span><% } %>
                 </a>
-                <div class="profile-menu-container">
-                    <a class="action-item">
-                        PERFIL <%= (nombreUser != null) ? "(" + nombreUser.toUpperCase() + ")" : "" %> ▾
-                    </a>
-                </div>
-                <a href="configuracion.jsp" class="action-item">CONFIGURACIÓN</a>
-                <% if(nombreUser == null) { %>
-                    <a href="login.jsp" class="action-item" style="color: var(--accent-green)">Ingresa</a>
+                <a class="action-item">PERFIL <%= (nombreUser != null) ? "(" + nombreUser.toUpperCase() + ")" : "" %></a>
+                <% if(nombreUser != null) { %>
+                    <a href="LogoutServlet" class="action-item" style="color: #ff4444;">SALIR</a>
+                <% } else { %>
+                    <a href="login.jsp" class="action-item" style="color: var(--accent-green)">INGRESA</a>
                 <% } %>
             </div>
         </div>
@@ -212,7 +209,7 @@
             <ul class="nav-links">
                 <li><a href="index.jsp">INICIO</a></li>
                 <li><a href="conciertos.jsp">CONCIERTOS</a></li>
-                <li><a href="artistas.jsp" style="color: var(--accent-pink);">ARTISTAS</a></li>
+                <li><a href="artista.jsp" style="color: var(--accent-pink);">ARTISTAS</a></li>
                 <li><a href="productos.jsp">PRODUCTOS</a></li>
             </ul>
         </nav>
@@ -231,11 +228,11 @@
                         String fotoPath = (art.getfoto() != null && !art.getfoto().isEmpty()) 
                                           ? art.getfoto() : "default_artist.jpg";
             %>
-                <div class="artist-card">
-                    <div class="card-header">GÉNERO: <%= art.getgenero() %></div>
-                    <img src="img/artistas/<%= fotoPath %>" class="artist-img" alt="<%= art.getnombre() %>">
+            <div class="artist-card" onclick="location.href='perfilartista.jsp?id=<%=art.getID() %>'" style="cursor: pointer;">
+                    <div class="card-header">GÉNERO: <%= art.getgenero().toUpperCase() %></div>
+                    <img src="img/artistas/<%= art.getfoto() %>" class="artist-img" alt="<%= art.getnombre() %>">
                     <div class="artist-info">
-                        <h3><%= art.getnombre() %> <%= apellido %></h3>
+                        <h3><%= art.getnombre() %></h3>
                         <p>> EXPLORAR EVENTOS</p>
                     </div>
                 </div>

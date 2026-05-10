@@ -209,13 +209,13 @@
             <ul class="nav-links">
                 <li><a href="index.jsp">INICIO</a></li>
                 <li><a href="conciertos.jsp">CONCIERTOS</a></li>
-                <li><a href="artistas.jsp" style="color: var(--accent-pink);">ARTISTAS</a></li>
-                <li><a href="productos.jsp">PRODUCTOS</a></li>
+                <li><a href="artista.jsp">ARTISTAS</a></li>
+                <li><a href="productos.jsp"style="color: var(--accent-pink);">PRODUCTOS</a></li>
             </ul>
         </nav>
     </header>
     <div class="main-wrapper">
-        <div class="section-title">MERCH OFICIAL</div>
+        <div class="section-title">MERCH</div>
         
         <div class="artist-grid">
             <%
