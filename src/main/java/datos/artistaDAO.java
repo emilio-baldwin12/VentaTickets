@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import modelo.artista;
 import modelo.cancion;
+import modelo.concierto;
 public class artistaDAO {
    public List<artista> obtenerArtistas(){
        List<artista> lista = new ArrayList<>();
@@ -105,44 +106,71 @@ public class artistaDAO {
    }
    
    public boolean registrarArtista(artista art) {
-    Connection conn = null;
-    PreparedStatement psUsu = null;
-    PreparedStatement psArt = null;
-    ResultSet rs = null;
-    boolean ok = false;
+        Connection conn = null;
+        PreparedStatement psUsu = null;
+        PreparedStatement psArt = null;
+        ResultSet rs = null;
+        boolean ok = false;
 
-    String sqlUsu = "INSERT INTO Usuarios (nombre, apellido, correo, contrasena, tipousuario) VALUES (?, ?, ?, ?, 'ARTISTA')";
-    String sqlArt = "INSERT INTO Artistas (id_usuario, descripcion, genero, foto) VALUES (?, ?, ?, ?)";
+        String sqlUsu = "INSERT INTO Usuarios (nombre, apellido, correo, contrasena, tipousuario) VALUES (?, ?, ?, ?, 'ARTISTA')";
+        String sqlArt = "INSERT INTO Artistas (id_usuario, descripcion, genero, foto) VALUES (?, ?, ?, ?)";
 
-    try {
-        conn = config.conexion.getConnection();
-        conn.setAutoCommit(false); 
+        try {
+            conn = config.conexion.getConnection();
+            conn.setAutoCommit(false); 
 
-        psUsu = conn.prepareStatement(sqlUsu, Statement.RETURN_GENERATED_KEYS);
-        psUsu.setString(1, art.getnombre());
-        psUsu.setString(2, art.getapellido());
-        psUsu.setString(3, art.getcorreo());
-        psUsu.setString(4, art.getcontrasena());
-        psUsu.executeUpdate();
+            psUsu = conn.prepareStatement(sqlUsu, Statement.RETURN_GENERATED_KEYS);
+            psUsu.setString(1, art.getnombre());
+            psUsu.setString(2, art.getapellido());
+            psUsu.setString(3, art.getcorreo());
+            psUsu.setString(4, art.getcontrasena());
+            psUsu.executeUpdate();
 
-        rs = psUsu.getGeneratedKeys();
-        if (rs.next()) {
-            int idGenerado = rs.getInt(1);
+            rs = psUsu.getGeneratedKeys();
+            if (rs.next()) {
+                int idGenerado = rs.getInt(1);
 
-            psArt = conn.prepareStatement(sqlArt);
-            psArt.setInt(1, idGenerado);
-            psArt.setString(2, art.getdescripcion());
-            psArt.setString(3, art.getgenero());
-            psArt.setString(4, art.getfoto());
-            psArt.executeUpdate();
+                psArt = conn.prepareStatement(sqlArt);
+                psArt.setInt(1, idGenerado);
+                psArt.setString(2, art.getdescripcion());
+                psArt.setString(3, art.getgenero());
+                psArt.setString(4, art.getfoto());
+                psArt.executeUpdate();
 
-            conn.commit();//Se guarda todo
-            ok = true;
+                conn.commit();//Se guarda todo
+                ok = true;
+            }
+        } catch (SQLException e) {
+            if (conn != null) try { conn.rollback(); } catch (SQLException ex) {}
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        if (conn != null) try { conn.rollback(); } catch (SQLException ex) {}
-        e.printStackTrace();
+        return ok;
     }
-    return ok;
-}
+   
+   public List<concierto> obtenerGiraArtista(int idArtista){
+       List<concierto>lista=new ArrayList<>();
+       String sql= "SELECT c.* FROM Conciertos c " +
+                   "JOIN Conciero_Artista ca ON c.id = ca.id_concierto " +
+                   "WHERE ca.id_artista = ? " +
+                   "ORDER BY c.fecha ASC";
+       try(Connection conn =config.conexion.getConnection();
+           PreparedStatement ps=conn.prepareStatement(sql)){
+           ps.setInt(1,idArtista);
+           ResultSet rs=ps.executeQuery();
+           
+           while(rs.next()){
+               concierto c= new concierto();
+               c.setid(rs.getInt("id"));
+               c.setnombre(rs.getString("nombre"));
+               c.setciudad(rs.getString("ciudad"));
+               c.setfecha(rs.getDate("fecha"));
+               c.setdescripcion(rs.getString("descripcion"));
+               lista.add(c);
+           }
+           
+       }catch(SQLException e){
+           System.out.println("Error: " + e.getMessage());
+       }
+       return lista;
+   }
 }
