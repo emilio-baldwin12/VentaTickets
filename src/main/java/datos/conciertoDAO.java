@@ -10,18 +10,37 @@ import modelo.concierto;
  * @author luise
  */
 public class conciertoDAO {
-    public List<concierto> listar(){
+       public List<concierto> listarTours(){
+       List<concierto>lista=new ArrayList<>();
+       String sql= "SELECT nombre,fotos From Conciertos Group by nombre, fotos";
+       
+       try (Connection conn = config.conexion.getConnection();
+            PreparedStatement ps=conn.prepareStatement(sql);
+            ResultSet rs=ps.executeQuery()){
+           while(rs.next()) {
+               concierto c=new concierto();
+               c.setnombre(rs.getString("nombre"));
+               c.setfotos(rs.getString("fotos"));
+               lista.add(c);
+           }
+       }catch (SQLException e){
+           e.printStackTrace();
+       }
+       return lista;
+   }
+       
+    public List<concierto> listarPorTour(String nombreTour){
         List<concierto> lista= new ArrayList<>();
         String sql= "SELECT c.*, u.nombre as nombreArtista, u.apellido as ApellidoArtista " +
                     "FROM Conciertos c " +
                     "JOIN Concierto_Artista ca ON c.id = ca.id_concierto " +
                     "JOIN Usuarios u ON ca.id_artista = u.id " +
-                    "ORDER BY c.fecha ASC";
+                    "WHERE c.nombre= ? ORDER BY c.fecha ASC";
         
         try(Connection conn = conexion.getConnection();
-            PreparedStatement ps=conn.prepareStatement(sql);
-            ResultSet rs= ps.executeQuery()){
-            
+            PreparedStatement ps=conn.prepareStatement(sql)){
+            ps.setString(1, nombreTour);
+            ResultSet rs=ps.executeQuery();
             while(rs.next()){
                 concierto c= new concierto();
                 c.setid(rs.getInt("id"));
@@ -36,5 +55,4 @@ public class conciertoDAO {
             e.printStackTrace();
         }
         return lista;
-    }
-}
+    }}

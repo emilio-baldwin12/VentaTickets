@@ -193,7 +193,9 @@
         <div class="header-top">
             <a href="index.jsp" class="logo">TICKETS</a>
             <div class="user-actions">
-                <a href="#" class="action-item">BUSCAR</a>
+                <a href="#" class="action-item search-trigger">
+                    <span></span> BUSCAR ARTISTA O EVENTO
+                </a>
                 <a href="notificaciones.jsp" class="action-item">
                     NOTIFICACIONES <% if(pendientes > 0) { %><span class="badge"><%= pendientes %></span><% } %>
                 </a>
