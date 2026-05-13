@@ -173,4 +173,31 @@ public class artistaDAO {
        }
        return lista;
    }
+   
+   public List<concierto> obtenerConciertosArtistas(int idArtista){
+       List <concierto> lista =new ArrayList<>();
+       String sql ="SELECT c.* FROM Conciertos c " +
+                   "JOIN Concierto_Artista ca ON c.id = ca.id_concierto " +
+                   "Where ca.id_artista = ? " +
+                   "Order by c.fecha asc";
+       
+       try(Connection conn = config.conexion.getConnection();
+           PreparedStatement ps=conn.prepareStatement(sql)){
+           
+           ps.setInt(1, idArtista);
+           ResultSet rs=ps.executeQuery();
+           
+           while(rs.next()){
+               concierto c= new concierto();
+               c.setid(rs.getInt("id"));
+               c.setnombre(rs.getString("nombre"));
+               c.setciudad(rs.getString("ciudad"));
+               c.setfecha(rs.getDate("fecha"));
+               lista.add(c);
+           }
+       }catch(SQLException e){
+           e.printStackTrace();
+       }
+       return lista;
+   }
 }

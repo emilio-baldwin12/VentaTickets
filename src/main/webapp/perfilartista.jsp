@@ -6,6 +6,8 @@
 <%@page import="modelo.cancion"%>
 <%@page import="java.util.List"%>
 <%@page import="modelo.artista"%>
+<%@page import="modelo.concierto"%>
+<%@page import="modelo.cancion"%>
 <%@page import="datos.artistaDAO"%>
 <%@page import="datos.solicitudDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -234,6 +236,84 @@
             margin-right: 15px; 
             object-fit: cover;
         }
+        .concert-list {
+            margin-top: 20px;
+        }
+
+        .concert-card {
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border-left: 5px solid #007bff; /* El borde azul de la imagen */
+        }
+
+        .concert-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .date-box {
+            text-align: center;
+            min-width: 80px;
+            padding-right: 20px;
+            border-right: 1px solid #eee;
+        }
+
+        .month {
+            color: #007bff;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .day {
+            font-size: 28px;
+            font-weight: 800;
+            color: #333;
+        }
+
+        .info {
+            flex-grow: 1;
+            padding-left: 25px;
+        }
+
+        .artist-name-card {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .tour-name-card {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .location-card {
+            color: #888;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .btn-tickets-card {
+            background: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .btn-tickets-card:hover {
+            background: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -297,10 +377,50 @@
     </nav>
 
     <div id="conciertos" class="tab-content active">
-        <h2>Próximos Eventos</h2>
-        <div style="border: 2px dashed #ccc; padding: 40px; text-align: center; border-radius: 10px;">
-            No hay fechas disponibles por ahora.
+        <h3>Próximos Eventos</h3>
+        <div class="concert-list">
+            <%
+                java.text.SimpleDateFormat sdfDia = new java.text.SimpleDateFormat("dd");
+                java.text.SimpleDateFormat sdfMes = new java.text.SimpleDateFormat("MMM");
+
+                List<concierto> gira = dao.obtenerConciertosArtistas(id);
+
+                if(gira.isEmpty()) {
+            %>
+                <div style="background: white;
+                     padding: 40px;
+                     border-radius: 10px; 
+                     text-align: center; 
+                     color: #666; 
+                     border: 2px dashed #ccc;">
+                    No hay fechas disponibles por ahora.
+                </div>
+            <%
+                } else {
+                    for(concierto c : gira) {
+            %>
+                    <div class="concert-card">
+                        <div class="date-box">
+                            <div class="month"><%= sdfMes.format(c.getfecha()).toUpperCase() %></div>
+                            <div class="day"><%= sdfDia.format(c.getfecha()) %></div>
+                        </div>
+
+                        <div class="info">
+                            <div class="artist-name-card"><%= nombreCompleto %></div>
+                            <div class="tour-name-card"><%= c.getnombre() %></div>
+                            <div class="location-card"><%= c.getciudad() %></div>
+                        </div>
+
+                        <div class="actions">
+                            <a href="detalle_evento.jsp?id=<%= c.getid() %>" class="btn-tickets-card">VER TICKETS</a>
+                        </div>
+                    </div>
+            <% 
+                    } 
+                } 
+            %>
         </div>
+    </div>
     </div>
 
     <div id="setlist" class="tab-content">
