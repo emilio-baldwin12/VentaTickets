@@ -310,7 +310,7 @@
                     </div>
 
                     <div class="actions">
-                        <a href="detalle_evento.jsp?id=<%= c.getid() %>" class="btn-tickets" style="background: #007bff; color: white; padding: 12px 25px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 13px;">
+                        <a href="concierto_asientos.jsp?id=<%= c.getid() %>" class="btn-tickets" style="background: #007bff; color: white; padding: 12px 25px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 13px;">
                             VER TICKETS
                         </a>
                     </div>
