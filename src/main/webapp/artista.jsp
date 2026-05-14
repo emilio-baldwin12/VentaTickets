@@ -234,8 +234,8 @@
                     <div class="card-header">GÉNERO: <%= art.getgenero().toUpperCase() %></div>
                     <img src="img/artistas/<%= art.getfoto() %>" class="artist-img" alt="<%= art.getnombre() %>">
                     <div class="artist-info">
-                        <h3><%= art.getnombre() %></h3>
-                        <p>> EXPLORAR EVENTOS</p>
+                        <h3><%= art.getnombre()%> <%= art.getapellido()%></h3>
+                        <p> EXPLORAR EVENTOS</p>
                     </div>
                 </div>
             <% 
