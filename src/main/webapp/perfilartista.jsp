@@ -249,7 +249,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             transition: 0.3s;
-            border-left: 5px solid #007bff; /* El borde azul de la imagen */
+            border-left: 5px solid #007bff; 
         }
 
         .concert-card:hover {
@@ -412,7 +412,7 @@
                         </div>
 
                         <div class="actions">
-                            <a href="detalle_evento.jsp?id=<%= c.getid() %>" class="btn-tickets-card">VER TICKETS</a>
+                            <a href="concierto_asientos.jsp?id=<%= c.getid() %>" class="btn-tickets-card">VER TICKETS</a>
                         </div>
                     </div>
             <% 
