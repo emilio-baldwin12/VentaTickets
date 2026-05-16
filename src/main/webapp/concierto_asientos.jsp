@@ -188,6 +188,131 @@
                 cursor: pointer; 
                 margin-top: 20px; 
             }
+            
+            .seats-grid-container {
+                margin-top: 25px;
+                background: #fafafa;
+                border: 1px solid #eaeaea;
+                border-radius: 12px;
+                padding: 25px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+            .stage-direction {
+                width: 70%;
+                background: #e0e0e0;
+                text-align: center;
+                font-size: 11px;
+                font-weight: bold;
+                padding: 5px;
+                border-radius: 4px;
+                color: #777;
+                margin-bottom: 10px;
+                letter-spacing: 1px;
+            }
+            .seats-rows-holder {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+                margin-bottom: 30px;
+            }
+            .seats-row {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+           .row-name {
+                font-weight: bold;
+                color: #aaa;
+                font-size: 14px;
+                width: 25px;
+                text-align: center;
+            }
+            .row-label {
+                font-weight: bold;
+                color: #999;
+                font-size: 14px;
+                width: 20px;
+                text-align: center;
+            }
+            .seat-dot {
+                width: 22px;
+                height: 22px;
+                border-radius: 50%;
+                background-color: var(--accent-green); /* Verde = Disponible */
+                cursor: pointer;
+                transition: transform 0.2s, background-color 0.2s;
+            }
+            .seat-dot:hover {
+                transform: scale(1.3);
+                background-color: var(--accent-pink) !important;
+            }
+
+            .seat-dot.occupied {
+                background-color: #d1d5db !important; /* Gris = Ocupado */
+                cursor: not-allowed;
+            }
+            .seat-dot.occupied:hover {
+                transform: none;
+            }
+
+            .seat-dot.selected-by-user {
+                background-color: #007bff !important; /* Azul = Tu selección */
+                box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+            }
+            .seat {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background-color: #28a745; 
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .seat:hover {
+                transform: scale(1.25);
+                background-color: var(--accent-pink) !important;
+            }
+            .seat.occupied {
+                background-color: #d6d6d6; 
+                cursor: not-allowed;
+            }
+            .seat.occupied:hover {
+                transform: none;
+                background-color: #d6d6d6 !important;
+            }
+            .seat.user-selected {
+                background-color: #007bff !important; 
+                box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+            }
+            .zona-block-header {
+                background: var(--entity-header);
+                color: white;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+                font-weight: bold;
+                font-size: 18px;
+                letter-spacing: 1px;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            }
+            .stage-indicator-bar {
+                width: 100%;
+                background: #e5e7eb;
+                color: #666;
+                text-align: center;
+                font-size: 11px;
+                font-weight: bold;
+                padding: 6px 0;
+                border-radius: 4px;
+                margin-bottom: 25px;
+                letter-spacing: 2px;
+            }
+            
         </style>
     </head>
     <body>
@@ -291,23 +416,30 @@
             <div class="seats-side">
                 <div id="placeholder-info" style="text-align: center; margin-top: 150px; color: #888;">
                     <h2>Selecciona una zona en el mapa</h2>
-                    <p>Haz clic para ver disponibilidad y precios.</p>
+                    <p>Haz clic en cualquier sección para abrir los lugares.</p>
                 </div>
 
-                <div id="detalle-seleccion" style="display: none;">
-                    <h1 id="txt-seccion" style="margin: 0; color: var(--entity-header);">-</h1>
-                    <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 5px solid var(--accent-pink);">
-                        <p style="margin: 0; color: #666;">Precio por persona:</p>
-                        <h2 style="margin: 0; color: #222;">$ <span id="txt-precio">0.00</span> MXN</h2>
+                <div id="detalle-seleccion" style="display: none; text-align: center;">
+
+                    <h1 id="txt-seccion" style="margin: 0 0 5px 0; color: var(--entity-header); font-size: 32px; font-weight: bold; text-transform: uppercase;">-</h1>
+                    <p style="color: #666; margin: 0 0 20px 0; font-size: 14px;">
+                    </p>
+
+                    <div id="seats-rows-holder" class="seats-rows-holder"></div>
+
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 25px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                        <div>
+                            <span style="font-size: 11px; color: #666; font-weight: bold;">PRECIO POR BOLETO</span>
+                            <h2 style="margin: 2px 0; color: var(--entity-header);">$ <span id="txt-precio">0.00</span> MXN</h2>
+                        </div>
+                        <button class="btn-checkout" style="margin: 0; width: auto; padding: 12px 30px;">RESERVAR LUGAR</button>
                     </div>
-                    <button class="btn-checkout">RESERVAR LUGAR</button>
                 </div>
             </div>
-        </div>
         <script>
             document.querySelectorAll('.fil0').forEach(seccion => {
                 seccion.addEventListener('click', function() {
-                    if(this.id === 'STAGE' || this.id === 'MIX'){
+                    if(this.id === 'STAGE' || this.id === 'MIX') {
                         return;
                     }
 
@@ -318,16 +450,47 @@
                     document.getElementById('detalle-seleccion').style.display = 'block';
 
                     let idLimpio = this.id.replace('_', '');
+                    let precio = (idLimpio === 'FLOOR') ? 2500 : 1500;
 
-                    let precio = 1500;
-                    if (idLimpio === 'FLOOR') {
-                        precio = 2500;
-                    } else if (idLimpio === 'SUITES') {
-                        precio = 5000;
-                    }
-
-                    document.getElementById('txt-seccion').innerText = "Zona " + idLimpio;
+                    document.getElementById('txt-seccion').innerText = "ZONA " + idLimpio;
                     document.getElementById('txt-precio').innerText = precio.toLocaleString();
+
+                    const rowsHolder = document.getElementById('seats-rows-holder');
+                    rowsHolder.innerHTML = ''; 
+
+                    const filas = ['A', 'B', 'C', 'D', 'E'];
+
+                    filas.forEach(letraFila => {
+                        const rowDiv = document.createElement('div');
+                        rowDiv.className = 'seats-row';
+
+                        const leftLabel = document.createElement('div');
+                        leftLabel.className = 'row-name';
+                        leftLabel.innerText = letraFila;
+                        rowDiv.appendChild(leftLabel);
+
+                        for(let i = 1; i <= 10; i++) {
+                            const seat = document.createElement('div');
+                            const isOccupied = Math.random() < 0.50; 
+
+                            if(isOccupied) {
+                                seat.className = 'seat-dot occupied';
+                            } else {
+                                seat.className = 'seat-dot';
+                                seat.addEventListener('click', function() {
+                                    this.classList.toggle('selected-by-user');
+                                });
+                            }
+                            rowDiv.appendChild(seat);
+                        }
+
+                        const rightLabel = document.createElement('div');
+                        rightLabel.className = 'row-name';
+                        rightLabel.innerText = letraFila;
+                        rowDiv.appendChild(rightLabel);
+
+                        rowsHolder.appendChild(rowDiv);
+                    });
                 });
             });
         </script>
