@@ -242,7 +242,7 @@
                 width: 22px;
                 height: 22px;
                 border-radius: 50%;
-                background-color: var(--accent-green); /* Verde = Disponible */
+                background-color: var(--accent-green);
                 cursor: pointer;
                 transition: transform 0.2s, background-color 0.2s;
             }
@@ -252,7 +252,7 @@
             }
 
             .seat-dot.occupied {
-                background-color: #d1d5db !important; /* Gris = Ocupado */
+                background-color: #d1d5db !important;
                 cursor: not-allowed;
             }
             .seat-dot.occupied:hover {
@@ -260,7 +260,7 @@
             }
 
             .seat-dot.selected-by-user {
-                background-color: #007bff !important; /* Azul = Tu selección */
+                background-color: #007bff !important;
                 box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
             }
             .seat {
