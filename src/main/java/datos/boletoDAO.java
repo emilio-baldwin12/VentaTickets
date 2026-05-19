@@ -63,14 +63,10 @@ public class boletoDAO {
             }
             return false;
         } finally {
-            try {
-                if (rs != null) rs.close();
-                if (orden != null) orden.close();
-                if (boleto != null) boleto.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            conexion.close(rs);
+            conexion.close(orden);
+            conexion.close(boleto);
+            conexion.close(conn);
         }
     }
 }
