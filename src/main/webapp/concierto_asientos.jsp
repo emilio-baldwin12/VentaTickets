@@ -436,7 +436,7 @@
                     </div>
                 </div>
             </div>
-        <form id="formCompra" action="comprarBoleto" method="POST" style="display: none;">
+        <form id="formCompra" action="boletoServlet" method="POST" style="display: none;">
             <input type="hidden" name="idConcierto" value="<%= idParam %>">
             <input type="hidden" name="precio" id="inputPrecio">
             <input type="hidden" name="asientosSeleccionados" id="inputAsientos">
@@ -444,6 +444,7 @@
         <script>
             document.querySelectorAll('.fil0').forEach(seccion => {
                 seccion.addEventListener('click', function() {
+                    
                     if(this.id === 'STAGE' || this.id === 'MIX') {
                         return;
                     }
@@ -462,7 +463,7 @@
 
                     const filas = ['A', 'B', 'C', 'D', 'E'];
 
-                    filas.forEach(letraFila,indexFila => {
+                    filas.forEach((letraFila,indexFila) => {
                         const rowDiv = document.createElement('div');
                         rowDiv.className = 'seats-row';
 
@@ -500,16 +501,16 @@
             
             document.querySelector('.btn-checkout').addEventListener('click',function(){
                const seleccionados=document.querySelectorAll('.seat-dot.selected-by-user');
-               if(seleccionados.lenght===0){
+               if(seleccionados.length===0){
                    alert("Por favor,selecciona al menos un asiento");
                    return;
                }
-               lets ids=[];
+               let ids=[];
                seleccionados.forEach(s=>{
                    ids.push(s.getAttribute('data-id-asiento'));
                    
                });
-               let precioText=document.getElementById('text-precio').innerText.replace(/,/g,'');
+               let precioText=document.getElementById('txt-precio').innerText.replace(/,/g,'');
                const inputasientos=document.getElementById('inputAsientos');
                const inputPrecio=document.getElementById('inputPrecio');
                const form=document.getElementById('formCompra');
@@ -524,3 +525,11 @@
         </script>
     </body>
 </html>
+
+
+
+
+
+
+
+

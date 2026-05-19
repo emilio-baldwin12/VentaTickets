@@ -1,6 +1,7 @@
 
 package controlador;
 import datos.boletoDAO;
+import modelo.boleto;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,10 +36,11 @@ public class boletoServlet extends HttpServlet {
         HttpSession sesion=request.getSession();
         int idUsuario=0;
         
-        if(sesion.getAttribute("idUsuario")!=null){
-            idUsuario=(int)sesion.getAttribute("idUsuario");
+        if(sesion.getAttribute("idusuario")!=null){
+            idUsuario=(int)sesion.getAttribute("idusuario");
         }
         if(idUsuario==0){
+            System.out.println("DEBUG: No se encontro al usuario en sesion");
             response.sendRedirect("login.jsp?error=sesion");
             return;//si nadie ingresa, se le manda directo para que ingrese o se registre
         }
@@ -52,10 +54,10 @@ public class boletoServlet extends HttpServlet {
                 idAsientos[i]=Integer.parseInt(asientosArr[i].trim());
             }
             boletoDAO dao=new boletoDAO();
-            boolean exito= dao.procesar_Compra(idUsuario, idConcierto, idAsientos, precio);
-            
+            boolean exito=dao.procesar_Compra(idUsuario, idConcierto, idAsientos, precio);
             if(exito){
-                response.sendRedirect("confirmacion.jsp?status=success");
+                int idOrden=dao.obtenerUltimaOrden(idUsuario);
+                response.sendRedirect("confirmacion.jsp?id_orden="+idOrden);
             }else{
                 response.sendRedirect("concierto_asientos.jsp?id=" + idConcierto + "&error=ocupado");
             }

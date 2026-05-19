@@ -109,7 +109,7 @@ public class boleto {
         this.recinto=recinto;
     }
 
-    public String getfech() {
+    public String getfecha() {
         return fecha;
     }
 

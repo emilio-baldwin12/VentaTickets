@@ -1,3 +1,4 @@
+controlador\boletoServlet.class
 modelo\usuario.class
 controlador\registroServlet.class
 datos\artistaDAO.class
@@ -14,7 +15,10 @@ modelo\administrador.class
 config\conexion.class
 controlador\loginServlet.class
 datos\solicitudDAO.class
+modelo\reventaboleto.class
 datos\productosDAO.class
+modelo\boleto.class
+datos\boletoDAO.class
 modelo\concierto.class
 controlador\artistaServlet.class
 datos\notificacionDAO.class
