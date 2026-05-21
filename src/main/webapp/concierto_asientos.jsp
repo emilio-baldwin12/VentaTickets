@@ -346,7 +346,7 @@
                 <div class="map-container">
                     <svg viewBox="2000 0 28000 20000" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
                         <g id="capa-estadio">
-                            <polygon id="FLOOR" class="fil0 str0" points="12052.03,9178.2 12162.35,8638.83 12787.53,8222.05 18168.93,8209.79 18156.67,11347.92 12824.3,11360.18 12284.93,11065.98 12052.03,10440.8 12554.62,10440.8 12566.88,9141.42 "/>
+                                <polygon id="FLOOR" class="fil0 str0" points="12052.03,9178.2 12162.35,8638.83 12787.53,8222.05 18168.93,8209.79 18156.67,11347.92 12824.3,11360.18 12284.93,11065.98 12052.03,10440.8 12554.62,10440.8 12566.88,9141.42 "/>
                                 <polygon id="_111" class="fil0 str0" points="13892.9,4979.98 15129.39,4979.98 15118.73,7953.96 13892.9,7985.94 "/>
                                 <polygon id="_112" class="fil0 str0" points="15193.35,5310.42 15204.01,8039.24 16834.9,8017.92 16845.56,5299.76 "/>
                                 <polygon id="_113" class="fil0 str0" points="16888.2,5001.3 18135.36,4990.64 18146.02,7985.94 16952.16,7996.6 "/>
@@ -427,102 +427,179 @@
 
                     <div id="seats-rows-holder" class="seats-rows-holder"></div>
 
-                    <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 25px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
-                        <div>
-                            <span style="font-size: 11px; color: #666; font-weight: bold;">PRECIO POR BOLETO</span>
-                            <h2 style="margin: 2px 0; color: var(--entity-header);">$ <span id="txt-precio">0.00</span> MXN</h2>
+                        <div id="carrito-container" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 20px; text-align: left; border: 1px solid #eee;">
+                            <h3 style="margin: 0 0 15px 0; font-size: 16px; color: var(--entity-header);">TUS ASIENTOS:</h3>
+                            <ul id="lista-carrito" style="list-style: none; padding: 0; margin: 0; margin-bottom: 15px;">
+                                </ul>
+                            <hr style="border-top: 1px dashed #ccc; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 14px; font-weight: bold; color: #666;">TOTAL A PAGAR:</span>
+                                <h2 style="margin: 0; color: var(--entity-header);">$ <span id="txt-total-carrito">0.00</span> MXN</h2>
+                            </div>
                         </div>
-                        <button class="btn-checkout" style="margin: 0; width: auto; padding: 12px 30px;">RESERVAR LUGAR</button>
+
+                        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                            <div>
+                                <span style="font-size: 11px; color: #666; font-weight: bold;">PRECIO UNITARIO</span>
+                                <h3 style="margin: 2px 0; color: #333;">$ <span id="txt-precio">0.00</span> MXN</h3>
+                            </div>
+                            <button class="btn-checkout" style="margin: 0; width: auto; padding: 12px 30px;">IR AL PAGO -></button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <form id="formCompra" action="boletoServlet" method="POST" style="display: none;">
-            <input type="hidden" name="idConcierto" value="<%= idParam %>">
-            <input type="hidden" name="precio" id="inputPrecio">
-            <input type="hidden" name="asientosSeleccionados" id="inputAsientos">
-        </form>      
-        <script>
-            document.querySelectorAll('.fil0').forEach(seccion => {
-                seccion.addEventListener('click', function() {
-                    
-                    if(this.id === 'STAGE' || this.id === 'MIX') {
+
+                <form id="formCompra" action="pago.jsp" method="POST" style="display: none;">
+                    <input type="hidden" name="idConcierto" value="<%= idParam %>">
+                    <input type="hidden" name="precio" id="inputPrecio">
+                    <input type="hidden" name="asientosSeleccionados" id="inputAsientos">
+                    <input type="hidden" name="totalPagar" id="inputTotal">
+                </form>    
+            <script>
+                let carritoGlobal = [];
+
+                function actualizarCarrito() {
+                    const listaCarrito = document.getElementById('lista-carrito');
+                    const contenedorCarrito = document.getElementById('carrito-container');
+                    const txtTotalCarrito = document.getElementById('txt-total-carrito');
+
+                    listaCarrito.innerHTML = '';
+                    if (carritoGlobal.length === 0) {
+                        contenedorCarrito.style.display = 'none';
+                        txtTotalCarrito.innerText = '0.00';
                         return;
                     }
 
-                    document.querySelectorAll('.fil0').forEach(s => s.classList.remove('selected'));
-                    this.classList.add('selected');
-                    document.getElementById('placeholder-info').style.display = 'none';
-                    document.getElementById('detalle-seleccion').style.display = 'block';
-                    let idLimpio = this.id.replace('_', '');
-                    let precio = (idLimpio === 'FLOOR') ? 2500 : 1500;
-                    document.getElementById('txt-seccion').innerText = "ZONA " + idLimpio;
-                    document.getElementById('txt-precio').innerText = precio.toLocaleString();
+                    contenedorCarrito.style.display = 'block';
+                    let total = 0;
 
-                    const rowsHolder = document.getElementById('seats-rows-holder');
-                    rowsHolder.innerHTML = ''; 
+                    carritoGlobal.forEach(item => {
+                        let li = document.createElement('li');
+                        li.style.padding = "8px 0";
+                        li.style.fontSize = "14px";
+                        li.style.display = "flex";
+                        li.style.justifyContent = "space-between";
+                        li.style.borderBottom = "1px solid #eee";
 
-                    const filas = ['A', 'B', 'C', 'D', 'E'];
+                        li.innerHTML = `<span><strong>ZONA ${item.zona}</strong> - Fila ${item.fila}, Asiento ${item.num}</span> 
+                                        <span>$ ${item.precio.toLocaleString()}</span>`;
 
-                    filas.forEach((letraFila,indexFila) => {
-                        const rowDiv = document.createElement('div');
-                        rowDiv.className = 'seats-row';
+                        listaCarrito.appendChild(li);
+                        total += item.precio;
+                    });
 
-                        const leftLabel = document.createElement('div');
-                        leftLabel.className = 'row-name';
-                        leftLabel.innerText = letraFila;
-                        rowDiv.appendChild(leftLabel);
+                    if(listaCarrito.lastChild) {
+                        listaCarrito.lastChild.style.borderBottom = "none";
+                    }
 
-                        for(let i = 1; i <= 10; i++) {
-                            const seat = document.createElement('div');
-                            let idAsientoFake=((indexFila +1)*100)+i;
-                            seat.setAttribute('data-id-asiento',idAsientoFake);
-                            const isOccupied = Math.random() < 0.30; 
+                    txtTotalCarrito.innerText = total.toLocaleString();
+                }
 
-                            if(isOccupied) {
-                                seat.className = 'seat-dot occupied';
-                            } else {
-                                seat.className = 'seat-dot';
-                                seat.addEventListener('click', function() {
-                                    this.classList.toggle('selected-by-user');
-                                });
-                            }
-                            rowDiv.appendChild(seat);
+                document.querySelectorAll('.fil0').forEach(seccion => {
+                    seccion.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if(this.id === 'STAGE' || this.id === 'MIX') {
+                            return;
                         }
 
-                        const rightLabel = document.createElement('div');
-                        rightLabel.className = 'row-name';
-                        rightLabel.innerText = letraFila;
-                        rowDiv.appendChild(rightLabel);
+                        document.querySelectorAll('.fil0').forEach(s => s.classList.remove('selected'));
+                        this.classList.add('selected');
 
-                        rowsHolder.appendChild(rowDiv);
+                        document.getElementById('placeholder-info').style.display = 'none';
+                        document.getElementById('detalle-seleccion').style.display = 'block';
+
+                        let idLimpio = this.id.replace('_', '');
+                        let precio = (idLimpio === 'FLOOR') ? 2500 : 1500;
+
+                        document.getElementById('txt-seccion').innerText = "ZONA " + idLimpio;
+                        document.getElementById('txt-precio').innerText = precio.toLocaleString();
+
+                        const rowsHolder = document.getElementById('seats-rows-holder');
+                        rowsHolder.innerHTML = ''; 
+
+                        const filas = ['A', 'B', 'C', 'D', 'E'];
+
+                        let prefijoZona = isNaN(parseInt(idLimpio)) ? 90 : parseInt(idLimpio);
+
+                        filas.forEach((letraFila, indexFila) => {
+                            const rowDiv = document.createElement('div');
+                            rowDiv.className = 'seats-row';
+
+                            const leftLabel = document.createElement('div');
+                            leftLabel.className = 'row-name';
+                            leftLabel.innerText = letraFila;
+                            rowDiv.appendChild(leftLabel);
+
+                            for(let i = 1; i <= 10; i++) {
+                                const seat = document.createElement('div');
+
+                                let idAsientoFake = (prefijoZona * 1000) + ((indexFila + 1) * 100) + i;
+
+                                let yaSeleccionado = carritoGlobal.find(item => item.id === idAsientoFake);
+
+                                const isOccupied = Math.random() < 0.30; 
+
+                                if(isOccupied && !yaSeleccionado) {
+                                    seat.className = 'seat-dot occupied';
+                                } else {
+                                    seat.className = yaSeleccionado ? 'seat-dot selected-by-user' : 'seat-dot';
+
+                                    seat.addEventListener('click', function() {
+                                        if (this.classList.contains('selected-by-user')) {
+                                            this.classList.remove('selected-by-user');
+                                            carritoGlobal = carritoGlobal.filter(item => item.id !== idAsientoFake);
+                                        } else {
+                                            this.classList.add('selected-by-user');
+                                            carritoGlobal.push({
+                                                id: idAsientoFake,
+                                                zona: idLimpio,
+                                                fila: letraFila,
+                                                num: i,
+                                                precio: precio
+                                            });
+                                        }
+                                        actualizarCarrito();
+                                    });
+                                }
+                                rowDiv.appendChild(seat);
+                            }
+
+                            const rightLabel = document.createElement('div');
+                            rightLabel.className = 'row-name';
+                            rightLabel.innerText = letraFila;
+                            rowDiv.appendChild(rightLabel);
+
+                            rowsHolder.appendChild(rowDiv);
+                        });
                     });
                 });
-            });
-            
-            document.querySelector('.btn-checkout').addEventListener('click',function(){
-               const seleccionados=document.querySelectorAll('.seat-dot.selected-by-user');
-               if(seleccionados.length===0){
-                   alert("Por favor,selecciona al menos un asiento");
-                   return;
-               }
-               let ids=[];
-               seleccionados.forEach(s=>{
-                   ids.push(s.getAttribute('data-id-asiento'));
-                   
-               });
-               let precioText=document.getElementById('txt-precio').innerText.replace(/,/g,'');
-               const inputasientos=document.getElementById('inputAsientos');
-               const inputPrecio=document.getElementById('inputPrecio');
-               const form=document.getElementById('formCompra');
-               if(inputAsientos && inputPrecio && form){
-                   inputAsientos.value=ids.join(',');
-                   inputPrecio.value=precioText;
-                   form.submit();
-               }else{
-                   console.error("Error");
-               }
-            });
-        </script>
+
+                document.querySelector('.btn-checkout').addEventListener('click', function(){
+                    if(carritoGlobal.length === 0){
+                        alert("Por favor, selecciona un asiento para continuar al pago");
+                        return;
+                    }
+
+                    let ids = carritoGlobal.map(item => item.id);
+
+                    let precioText = document.getElementById('txt-precio').innerText.replace(/,/g, '');
+                    let totalText = document.getElementById('txt-total-carrito').innerText.replace(/,/g, '');
+
+                    const inputAsientos = document.getElementById('inputAsientos');
+                    const inputPrecio = document.getElementById('inputPrecio');
+                    const inputTotal = document.getElementById('inputTotal');
+                    const form = document.getElementById('formCompra');
+
+                    if(inputAsientos && inputPrecio && form){
+                        inputAsientos.value = ids.join(',');
+                        inputPrecio.value = precioText; 
+                        inputTotal.value = totalText;
+
+                        form.submit();
+                    }
+                });
+            </script>
     </body>
 </html>
 

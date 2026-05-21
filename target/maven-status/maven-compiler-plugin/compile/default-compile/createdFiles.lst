@@ -2,6 +2,7 @@ controlador\boletoServlet.class
 modelo\usuario.class
 controlador\registroServlet.class
 datos\artistaDAO.class
+modelo\fila.class
 modelo\notificacion.class
 com\mycompany\ventatickets\resources\JakartaEE8Resource.class
 datos\usuarioDAO.class
