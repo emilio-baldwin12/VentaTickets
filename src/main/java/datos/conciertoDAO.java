@@ -55,4 +55,33 @@ public class conciertoDAO {
             e.printStackTrace();
         }
         return lista;
-    }}
+    }
+    
+    public concierto detalleConcierto(int idConcierto){
+        concierto c=null;
+        String sql="Select c.*,r.ruta_mapa " +
+                   "from Conciertos c " +
+                   "Join Recintos r on c.id_recinto=r.id " +
+                   "where c.id=?";
+        try(Connection conn = config.conexion.getConnection();
+            PreparedStatement ps=conn.prepareStatement(sql)){
+            
+            ps.setInt(1,idConcierto);
+            ResultSet rs=ps.executeQuery();
+            
+            if(rs.next()){
+                c=new concierto();
+                c.setid(rs.getInt("id"));
+                c.setnombre(rs.getString("nombre"));
+                c.setciudad(rs.getString("ciudad"));
+                c.setfecha(rs.getDate("fecha"));
+                c.setfotos(rs.getString("fotos"));
+                c.setdescripcion(rs.getString("descripcion"));
+                c.setrutamapa(rs.getString("ruta_mapa"));
+            }
+        }catch(SQLException e){
+            System.out.println("Error al intentar obetener los detalles: " + e.getMessage());
+        }
+         return c;   
+    }
+}

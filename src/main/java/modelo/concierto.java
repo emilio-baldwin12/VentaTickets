@@ -17,6 +17,7 @@ public class concierto {
     private Date fecha;
     private String fotos;
     private String track_list;
+    private String ruta_mapa;
     
     public concierto(){
         
@@ -77,6 +78,13 @@ public class concierto {
     public void settrack_list(String track_list){
         this.track_list=track_list;
     } 
+    
+    public String getrutamapa(){
+        return ruta_mapa;
+    }
+    public void setrutamapa(String ruta_mapa){
+        this.ruta_mapa=ruta_mapa;
+    }
 }
 
     
