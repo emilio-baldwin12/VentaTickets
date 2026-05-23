@@ -7,7 +7,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Tickets | Nuestros Artistas</title>
+    <title>Tickets | Artistas</title>
     <style>
         :root {
             --bg-blue: #8EACB8;

@@ -17,7 +17,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Tickets | Pago Seguro</title>
+    <title>Tickets | Pago</title>
     <style>
         :root {
             --bg-blue: #8EACB8;

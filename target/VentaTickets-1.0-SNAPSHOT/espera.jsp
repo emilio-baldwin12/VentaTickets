@@ -1,15 +1,12 @@
 <%@page import="datos.filaDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
-    // 1. Validar el parámetro del evento
     String idEvParam = request.getParameter("idEvento");
     int evId = (idEvParam != null) ? Integer.parseInt(idEvParam) : 0;
 
-    // 2. Validar la sesión del usuario (evita el error de la línea 4)
     Object idUsObj = session.getAttribute("idUsuario");
     int usId = (idUsObj != null) ? (int)idUsObj : 0;
 
-    // 3. Si algo falta, lo mandamos al inicio para que no explote
     if (evId == 0 || usId == 0) {
         response.sendRedirect("index.jsp");
         return; 
@@ -24,7 +21,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Tickets | Fila Virtual</title>
-    <!-- Se refresca cada 5 segundos para actualizar el lugar -->
     <meta http-equiv="refresh" content="5">
     <style>
         :root {
@@ -97,7 +93,6 @@
         </div>
 
         <% 
-            // Si ya es el primero (posición 0), lo mandamos a comprar
             if (posicion != null && posicion == 0) { 
         %>
             <div class="status-bar" style="background-color: #90EE90;">
