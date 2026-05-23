@@ -9,6 +9,7 @@ datos\usuarioDAO.class
 datos\conciertoDAO.class
 modelo\producto.class
 com\mycompany\ventatickets\JakartaRestConfiguration.class
+modelo\recinto.class
 controlador\filaServlet.class
 modelo\artista.class
 datos\filaDAO.class
