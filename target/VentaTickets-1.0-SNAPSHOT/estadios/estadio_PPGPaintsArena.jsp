@@ -3,7 +3,6 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
     </head>
     <body>
         <svg viewBox="2000 0 28000 20000" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
