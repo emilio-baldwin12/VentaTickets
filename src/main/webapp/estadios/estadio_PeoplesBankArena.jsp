@@ -11,7 +11,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
-        <svg viewBox="0 0 136533 127467" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
+        <svg viewBox="16000 15000 104000 98000" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
             <g id="capa-estadio">
                 <polygon id="_400" class="fil0 str0" points="41300,22559 42700,23859 44100,22559 42800,21359 "/>
                 <polygon id="_401" class="fil0 str0" points="46000,18759 43000,21159 44100,22609 47400,20059 "/>

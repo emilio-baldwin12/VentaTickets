@@ -244,7 +244,7 @@
                 </button>
 
                 <button class="btn-pago" onclick="procesarPago('DEBITO')">
-                    <span>Tarjeta de Débito</span>
+                    <span>Pago con PayPal</span>
                     <img src="${pageContext.request.contextPath}/img/auxiliares/paypal.jpg" class="icono-pago">
                 </button>
 
@@ -255,15 +255,18 @@
             </div>
 
         </div>
+        <form id="formFinalizarPago" action="transaccion.jsp" method="POST" style="display: none;">
+            <input type="hidden" name="metodoPago" id="inputMetodoPago">
+            <input type="hidden" name="idConcierto" value="<%= request.getParameter("idConcierto") %>">
+            <input type="hidden" name="asientosSeleccionados" value="<%= request.getParameter("asientosSeleccionados") %>">
+            <input type="hidden" name="totalPagar" value="<%= request.getParameter("totalPagar") %>">
+        </form>
 
-    <script>
-        function procesarPago(metodo) {
-            document.getElementById('inputMetodo').value = metodo;
-            
-            alert("Procesando pago con " + metodo + "...\nPor favor espera.");
-            
-            document.getElementById('formFinal').submit();
-        }
-    </script>
+        <script>
+            function procesarPago(metodo) {
+                document.getElementById('inputMetodoPago').value = metodo;
+                document.getElementById('formFinalizarPago').submit();
+            }
+        </script>
 </body>
 </html>
