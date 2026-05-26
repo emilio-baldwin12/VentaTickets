@@ -387,7 +387,11 @@
                                 <span style="font-size: 11px; color: #666; font-weight: bold;">PRECIO UNITARIO</span>
                                 <h3 style="margin: 2px 0; color: #333;">$ <span id="txt-precio">0.00</span> MXN</h3>
                             </div>
-                            <button class="btn-checkout" style="margin: 0; width: auto; padding: 12px 30px;">IR AL PAGO -></button>
+                            <% if (nombreUser == null) { %>
+                                <button type="button" onclick="window.location.href='login.jsp'" class="btn-checkout" style="margin: 0; width: auto; padding: 12px 30px; background: #ff4444;">INICIA SESIÓN PARA COMPRAR</button>
+                            <% } else { %>
+                                <button type="button" id="btn-procesar-compra" class="btn-checkout" style="margin: 0; width: auto; padding: 12px 30px;">IR AL PAGO -></button>
+                            <% } %>       
                         </div>
                     </div>
                 </div>
@@ -519,7 +523,7 @@
                     });
                 });
 
-                document.querySelector('.btn-checkout').addEventListener('click', function(){
+                    document.getElementById('btn-procesar-compra')?.addEventListener('click', function(){
                     if(carritoGlobal.length === 0){
                         alert("Por favor, selecciona un asiento para continuar al pago");
                         return;

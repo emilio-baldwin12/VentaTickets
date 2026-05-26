@@ -10,12 +10,17 @@
     String asientos = request.getParameter("asientosSeleccionados");
     String total = request.getParameter("totalPagar");
     String metodo = request.getParameter("metodoPago");
+    if (session.getAttribute("nombreusuario") == null) {
+        response.sendRedirect("login.jsp");
+        return; 
+    }
+
 %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Ticketes | Procesar Transacción</title>
+        <title>Ticketes | Transacción</title>
         <style>
             body {
                 background-color: #8EACB8;
@@ -101,13 +106,13 @@
 
                 <div class="form-group">
                     <label>Número de Tarjeta</label>
-                    <input type="text" required placeholder="0000 0000 0000 0000" maxlength="19">
+                    <input type="text" id="numeroTarjeta" required placeholder="0000 0000 0000 0000" maxlength="19">
                 </div>
 
                 <div style="display: flex; gap: 20px;">
                     <div class="form-group" style="flex: 1;">
                         <label>Vencimiento</label>
-                        <input type="text" required placeholder="MM/YY" maxlength="5">
+                        <input type="text" id="fechaVencimiento" required placeholder="MM/YY" maxlength="5">
                     </div>
                     <div class="form-group" style="flex: 1;">
                         <label>CVV</label>
@@ -120,4 +125,13 @@
         </div>
 
     </body>
+    <script>
+        document.getElementById('fechaVencimiento').addEventListener('input', function (e) {
+                let valor = e.target.value.replace(/\D/g, '');
+                if (valor.length > 2) {
+                    valor = valor.slice(0, 2) + '/' + valor.slice(2, 4);
+                }
+                e.target.value = valor;
+            });
+</script>
 </html>
