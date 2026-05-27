@@ -6,6 +6,7 @@ modelo\fila.class
 modelo\notificacion.class
 com\mycompany\ventatickets\resources\JakartaEE8Resource.class
 datos\usuarioDAO.class
+controlador\asientoServlet.class
 datos\conciertoDAO.class
 modelo\producto.class
 com\mycompany\ventatickets\JakartaRestConfiguration.class

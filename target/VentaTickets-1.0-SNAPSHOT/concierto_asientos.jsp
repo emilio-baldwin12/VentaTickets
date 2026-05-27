@@ -170,7 +170,7 @@
             }
             .str0 { 
                 stroke: #fff; 
-                    stroke-width: 15; 
+                stroke-width: 15; 
             }
             #STAGE { 
                 fill: #111 !important; 
@@ -360,7 +360,7 @@
             <div class="seats-side">
                 <div id="placeholder-info" style="text-align: center; margin-top: 150px; color: #888;">
                     <h2>Selecciona una zona en el mapa</h2>
-                    <p>Haz clic en cualquier sección para abrir los lugares.</p>
+                    <p>Haz clic en cualquier sección para abrir los lugares</p>
                 </div>
 
                 <div id="detalle-seleccion" style="display: none; text-align: center;">
@@ -384,7 +384,7 @@
 
                         <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
                             <div>
-                                <span style="font-size: 11px; color: #666; font-weight: bold;">PRECIO UNITARIO</span>
+                                <span style="font-size: 11px; color: #666; font-weight: bold;">PRECIO</span>
                                 <h3 style="margin: 2px 0; color: #333;">$ <span id="txt-precio">0.00</span> MXN</h3>
                             </div>
                             <% if (nombreUser == null) { %>
@@ -404,19 +404,18 @@
                 </form>    
             <script>
                 let carritoGlobal = [];
+                const idRecintoActual = 1; 
 
                 function actualizarCarrito() {
                     const listaCarrito = document.getElementById('lista-carrito');
                     const contenedorCarrito = document.getElementById('carrito-container');
                     const txtTotalCarrito = document.getElementById('txt-total-carrito');
-
                     listaCarrito.innerHTML = '';
                     if (carritoGlobal.length === 0) {
                         contenedorCarrito.style.display = 'none';
                         txtTotalCarrito.innerText = '0.00';
                         return;
                     }
-
                     contenedorCarrito.style.display = 'block';
                     let total = 0;
 
@@ -427,10 +426,7 @@
                         li.style.display = "flex";
                         li.style.justifyContent = "space-between";
                         li.style.borderBottom = "1px solid #eee";
-
-                        li.innerHTML = `<span><strong>ZONA ${item.zona}</strong> - Fila ${item.fila}, Asiento ${item.num}</span> 
-                                        <span>$ ${item.precio.toLocaleString()}</span>`;
-
+                        li.innerHTML = '<span><strong>ZONA ' + item.zona + '</strong> - Fila ' + item.fila + ', Asiento ' + item.numero + '</span> ' + '<span>$ ' + item.precio.toLocaleString() + '</span>';
                         listaCarrito.appendChild(li);
                         total += item.precio;
                     });
@@ -438,92 +434,126 @@
                     if(listaCarrito.lastChild) {
                         listaCarrito.lastChild.style.borderBottom = "none";
                     }
-
                     txtTotalCarrito.innerText = total.toLocaleString();
                 }
-
                 document.querySelectorAll('.fil0').forEach(seccion => {
                     seccion.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-
                         if(this.id === 'STAGE' || this.id === 'MIX') {
                             return;
                         }
-
                         document.querySelectorAll('.fil0').forEach(s => s.classList.remove('selected'));
                         this.classList.add('selected');
-
                         document.getElementById('placeholder-info').style.display = 'none';
                         document.getElementById('detalle-seleccion').style.display = 'block';
-
                         let idLimpio = this.id.replace('_', '');
-                        let precio = (idLimpio === 'FLOOR') ? 2500 : 1500;
-
                         document.getElementById('txt-seccion').innerText = "ZONA " + idLimpio;
-                        document.getElementById('txt-precio').innerText = precio.toLocaleString();
+                        document.getElementById('txt-precio').innerText = "Cargando...";
 
                         const rowsHolder = document.getElementById('seats-rows-holder');
-                        rowsHolder.innerHTML = ''; 
+                        rowsHolder.innerHTML = '<p>Buscando disponibilidad...</p>'; 
 
-                        const filas = ['A', 'B', 'C', 'D', 'E'];
+                        fetch('asientoServlet?idRecinto=' + idRecintoActual + '&zona=' + idLimpio).then(response => response.json()).then(asientosBD => {
+                            rowsHolder.innerHTML = ''; 
 
-                        let prefijoZona = isNaN(parseInt(idLimpio)) ? 90 : parseInt(idLimpio);
+                            if(asientosBD.length > 0 && asientosBD[0].error) {
+                                rowsHolder.innerHTML = '<h3 style="color:red; text-align:center;">' + asientosBD[0].error + '</h3>';
+                                return;
+                            }
+                            if(asientosBD.length === 0) {
+                                rowsHolder.innerHTML = '<p style="color:red;">Esta zona no está disponible</p>';
+                                return;
+                            }
+                            
+                            document.getElementById('txt-precio').innerText = asientosBD[0].precio.toLocaleString();
 
-                        filas.forEach((letraFila, indexFila) => {
-                            const rowDiv = document.createElement('div');
-                            rowDiv.className = 'seats-row';
+                            if(idLimpio === 'FLOOR' || asientosBD[0].fila === 'GENERAL') {
+                                let disponibles = asientosBD.filter(a => a.estado === 'DISPONIBLE').length;
+                                rowsHolder.innerHTML = 
+                                    '<div style="background:#e0ffe0; padding:20px; border-radius:10px; border:2px solid #28a745;">' +
+                                        '<h3>ENTRADA GENERAL</h3>' +
+                                        '<p>Lugares disponibles: <strong>' + disponibles + '</strong> / ' + asientosBD.length + '</p>' +
+                                        '<button onclick="agregarGeneralAlCarrito(' + asientosBD[0].id + ', \'' + idLimpio + '\', ' + asientosBD[0].precio + ')" style="padding:10px 20px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer;">Agregar 1 Boleto</button>' +
+                                    '</div>';
+                            } else {
+                                let asientosPorFila = {};
+                                asientosBD.forEach(a => {
+                                    if(!asientosPorFila[a.fila]) asientosPorFila[a.fila] = [];
+                                    asientosPorFila[a.fila].push(a);
+                                });
 
-                            const leftLabel = document.createElement('div');
-                            leftLabel.className = 'row-name';
-                            leftLabel.innerText = letraFila;
-                            rowDiv.appendChild(leftLabel);
+                                Object.keys(asientosPorFila).forEach(letraFila => {
+                                    const rowDiv = document.createElement('div');
+                                    rowDiv.className = 'seats-row';
 
-                            for(let i = 1; i <= 10; i++) {
-                                const seat = document.createElement('div');
+                                    const leftLabel = document.createElement('div');
+                                    leftLabel.className = 'row-name';
+                                    leftLabel.innerText = letraFila;
+                                    rowDiv.appendChild(leftLabel);
 
-                                let idAsientoFake = (prefijoZona * 1000) + ((indexFila + 1) * 100) + i;
+                                    asientosPorFila[letraFila].forEach(asientoReal => {
+                                        const seat = document.createElement('div');
+                                        let yaSeleccionado = carritoGlobal.find(item => item.id === asientoReal.id);
 
-                                let yaSeleccionado = carritoGlobal.find(item => item.id === idAsientoFake);
-
-                                const isOccupied = Math.random() < 0.30; 
-
-                                if(isOccupied && !yaSeleccionado) {
-                                    seat.className = 'seat-dot occupied';
-                                } else {
-                                    seat.className = yaSeleccionado ? 'seat-dot selected-by-user' : 'seat-dot';
-
-                                    seat.addEventListener('click', function() {
-                                        if (this.classList.contains('selected-by-user')) {
-                                            this.classList.remove('selected-by-user');
-                                            carritoGlobal = carritoGlobal.filter(item => item.id !== idAsientoFake);
+                                        if(asientoReal.estado !== 'DISPONIBLE' && !yaSeleccionado) {
+                                            seat.className = 'seat-dot occupied';
                                         } else {
-                                            this.classList.add('selected-by-user');
-                                            carritoGlobal.push({
-                                                id: idAsientoFake,
-                                                zona: idLimpio,
-                                                fila: letraFila,
-                                                num: i,
-                                                precio: precio
+                                            seat.className = yaSeleccionado ? 'seat-dot selected-by-user' : 'seat-dot';
+
+                                            seat.addEventListener('click', function() {
+                                                if (this.classList.contains('selected-by-user')) {
+                                                    this.classList.remove('selected-by-user');
+                                                    carritoGlobal = carritoGlobal.filter(item => item.id !== asientoReal.id);
+                                                } else {
+                                                    this.classList.add('selected-by-user');
+                                                    carritoGlobal.push({
+                                                        id: asientoReal.id, 
+                                                        zona: idLimpio,
+                                                        fila: asientoReal.fila,
+                                                        numero: asientoReal.numero,
+                                                        precio: asientoReal.precio
+                                                    });
+                                                }
+                                                actualizarCarrito();
                                             });
                                         }
-                                        actualizarCarrito();
+                                        rowDiv.appendChild(seat);
                                     });
-                                }
-                                rowDiv.appendChild(seat);
+
+                                    const rightLabel = document.createElement('div');
+                                    rightLabel.className = 'row-name';
+                                    rightLabel.innerText = letraFila;
+                                    rowDiv.appendChild(rightLabel);
+
+                                    rowsHolder.appendChild(rowDiv);
+                                });
                             }
-
-                            const rightLabel = document.createElement('div');
-                            rightLabel.className = 'row-name';
-                            rightLabel.innerText = letraFila;
-                            rowDiv.appendChild(rightLabel);
-
-                            rowsHolder.appendChild(rowDiv);
+                        })
+                        .catch(error => {
+                            console.error("Error al cargar asientos:", error);
+                            rowsHolder.innerHTML = '<p>Error de conexión con el servidor</p>';
                         });
                     });
                 });
 
-                    document.getElementById('btn-procesar-compra')?.addEventListener('click', function(){
+                function agregarGeneralAlCarrito(idReal, zona, precio) {
+                    let yaSeleccionado = carritoGlobal.find(item => item.zona === 'FLOOR');
+                    if(yaSeleccionado) {
+                        alert("Ya agregaste una entrada general");
+                        return;
+                    }
+                    carritoGlobal.push({
+                        id: idReal,
+                        zona: zona,
+                        fila: 'GEN',
+                        numero: 1,
+                        precio: precio
+                    });
+                    actualizarCarrito();
+                }
+
+                document.getElementById('btn-procesar-compra')?.addEventListener('click', function(){
                     if(carritoGlobal.length === 0){
                         alert("Por favor, selecciona un asiento para continuar al pago");
                         return;
