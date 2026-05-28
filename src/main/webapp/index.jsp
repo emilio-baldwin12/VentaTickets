@@ -219,7 +219,7 @@
 
             <div class="profile-menu-container" onclick="toggleMenu()">
                 <a class="action-item">
-                    PERFIL <%= (nombreUser != null) ? "(" + nombreUser.toUpperCase() + ")" : "" %> ▾
+                    PERFIL <%= (nombreUser != null) ? "(" + nombreUser.toUpperCase() + ")" : "" %>
                 </a>
             </div>
 

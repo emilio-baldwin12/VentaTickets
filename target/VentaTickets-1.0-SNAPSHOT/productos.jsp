@@ -196,7 +196,7 @@
                 </a>
                 <div class="profile-menu-container">
                     <a class="action-item">
-                        PERFIL <%= (nombreUser != null) ? "(" + nombreUser.toUpperCase() + ")" : "" %> ▾
+                        PERFIL <%= (nombreUser != null) ? "(" + nombreUser.toUpperCase() + ")" : "" %>
                     </a>
                 </div>
                 <a href="configuracion.jsp" class="action-item">CONFIGURACIÓN</a>

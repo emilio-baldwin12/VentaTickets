@@ -3,7 +3,6 @@
     Created on : 23 may 2026, 9:51:42 p.m.
     Author     : luise
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -140,4 +139,107 @@
             </g>
         </svg>
     </body>
+    <script>
+        const idRecintoActual = 1; 
+
+        document.querySelectorAll('.fil0').forEach(seccion => {
+            seccion.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if(this.id === 'STAGE' || this.id === 'MIX') {
+                    return;
+                }
+
+                document.querySelectorAll('.fil0').forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('placeholder-info').style.display = 'none';
+                document.getElementById('detalle-seleccion').style.display = 'block';
+
+                let idLimpio = this.id.replace('_', '');
+                document.getElementById('txt-seccion').innerText = "ZONA " + idLimpio;
+                document.getElementById('txt-precio').innerText = "Cargando...";
+                const rowsHolder = document.getElementById('seats-rows-holder');
+                rowsHolder.innerHTML = '<p>Buscando disponibilidad...</p>'; 
+
+                fetch('asientoServlet?idRecinto=' + idRecintoActual + '&zona=' + idLimpio)
+                .then(response => response.json())
+                .then(asientosBD => {
+                    rowsHolder.innerHTML = ''; 
+
+                    if(asientosBD.length > 0 && asientosBD[0].error) {
+                        rowsHolder.innerHTML = '<h3 style="color:red; text-align:center;">' + asientosBD[0].error + '</h3>';
+                        return;
+                    }
+                    if(asientosBD.length === 0) {
+                        rowsHolder.innerHTML = '<p style="color:red;">Esta zona no está disponible</p>';
+                        return;
+                    }
+
+                    document.getElementById('txt-precio').innerText = asientosBD[0].precio.toLocaleString();
+                    if(idLimpio === 'FLOOR' || asientosBD[0].fila === 'GENERAL') {
+                        window.floorDisponibles = asientosBD.filter(function(a) { 
+                            return a.estado === 'DISPONIBLE';
+                        });
+                        window.floorIdLimpio = idLimpio;
+                        window.floorTotal = asientosBD.length;
+                        window.renderFloorUI();
+                    } else {
+                        let asientosPorFila = {};
+                        asientosBD.forEach(a => {
+                            if(!asientosPorFila[a.fila]) asientosPorFila[a.fila] = [];
+                            asientosPorFila[a.fila].push(a);
+                        });
+                        Object.keys(asientosPorFila).forEach(letraFila => {
+                            const rowDiv = document.createElement('div');
+                            rowDiv.className = 'seats-row';
+                            const leftLabel = document.createElement('div');
+                            leftLabel.className = 'row-name';
+                            leftLabel.innerText = letraFila;
+                            rowDiv.appendChild(leftLabel);
+
+                            asientosPorFila[letraFila].forEach(asientoReal => {
+                                const seat = document.createElement('div');
+                                let yaSeleccionado = window.carritoGlobal.find(item => item.id === asientoReal.id);
+
+                                if(asientoReal.estado !== 'DISPONIBLE' && !yaSeleccionado) {
+                                    seat.className = 'seat-dot occupied';
+                                } else {
+                                    seat.className = yaSeleccionado ? 'seat-dot selected-by-user' : 'seat-dot';
+
+                                    seat.addEventListener('click', function() {
+                                        if (this.classList.contains('selected-by-user')) {
+                                            this.classList.remove('selected-by-user');
+                                            window.carritoGlobal = window.carritoGlobal.filter(item => item.id !== asientoReal.id);
+                                        }else{
+                                            this.classList.add('selected-by-user');
+                                            window.carritoGlobal.push({
+                                                id: asientoReal.id, 
+                                                zona: idLimpio,
+                                                fila: asientoReal.fila,
+                                                numero: asientoReal.numero,
+                                                precio: asientoReal.precio
+                                            });
+                                        }
+                                        window.actualizarCarrito();
+                                    });
+                                }
+                                rowDiv.appendChild(seat);
+                            });
+                            const rightLabel = document.createElement('div');
+                            rightLabel.className = 'row-name';
+                            rightLabel.innerText = letraFila;
+                            rowDiv.appendChild(rightLabel);
+
+                            rowsHolder.appendChild(rowDiv);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cargar asientos:", error);
+                    rowsHolder.innerHTML = '<p>Error 500</p>';
+                });
+            });
+        });
+    </script>
 </html>

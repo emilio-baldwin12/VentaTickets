@@ -402,180 +402,114 @@
                     <input type="hidden" name="asientosSeleccionados" id="inputAsientos">
                     <input type="hidden" name="totalPagar" id="inputTotal">
                 </form>    
-            <script>
-                let carritoGlobal = [];
-                const idRecintoActual = 1; 
-
-                function actualizarCarrito() {
+        <script>
+                window.carritoGlobal = [];
+                window.floorDisponibles = [];
+                window.floorIdLimpio = '';
+                window.floorTotal = 0;
+                window.actualizarCarrito = function() {
                     const listaCarrito = document.getElementById('lista-carrito');
                     const contenedorCarrito = document.getElementById('carrito-container');
                     const txtTotalCarrito = document.getElementById('txt-total-carrito');
+
                     listaCarrito.innerHTML = '';
-                    if (carritoGlobal.length === 0) {
+                    if (window.carritoGlobal.length === 0) {
                         contenedorCarrito.style.display = 'none';
                         txtTotalCarrito.innerText = '0.00';
                         return;
                     }
                     contenedorCarrito.style.display = 'block';
                     let total = 0;
-
-                    carritoGlobal.forEach(item => {
+                    window.carritoGlobal.forEach(item => {
                         let li = document.createElement('li');
                         li.style.padding = "8px 0";
                         li.style.fontSize = "14px";
                         li.style.display = "flex";
                         li.style.justifyContent = "space-between";
                         li.style.borderBottom = "1px solid #eee";
-                        li.innerHTML = '<span><strong>ZONA ' + item.zona + '</strong> - Fila ' + item.fila + ', Asiento ' + item.numero + '</span> ' + '<span>$ ' + item.precio.toLocaleString() + '</span>';
+                        li.innerHTML = '<span><strong>ZONA ' + item.zona + '</strong> - Fila ' + item.fila + ', Asiento ' + item.numero + '</span> ' +
+                                       '<span>$ ' + item.precio.toLocaleString() + '</span>';
+
                         listaCarrito.appendChild(li);
                         total += item.precio;
                     });
-
                     if(listaCarrito.lastChild) {
                         listaCarrito.lastChild.style.borderBottom = "none";
                     }
                     txtTotalCarrito.innerText = total.toLocaleString();
-                }
-                document.querySelectorAll('.fil0').forEach(seccion => {
-                    seccion.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if(this.id === 'STAGE' || this.id === 'MIX') {
+                };
+
+                window.renderFloorUI = function() {
+                    const rowsHolder = document.getElementById('seats-rows-holder');
+                    let actualesEnCarrito = window.carritoGlobal.filter(function(item) { 
+                        return item.zona === window.floorIdLimpio; 
+                    }).length;
+                    let lugaresRestantes = window.floorDisponibles.length - actualesEnCarrito;
+                    
+                    rowsHolder.innerHTML = '<div style="background:#f8f9fa; padding:25px; border-radius:12px; border:2px solid #ccc; text-align:center; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">' +
+                                               '<h3 style="margin-top:0; color:#1A1A1A; font-size: 22px;">ENTRADA GENERAL (PISTA)</h3>' +
+                                           '<p style="font-size:16px; color:#666;">Lugares disponibles: <strong style="color:#28a745;">' + lugaresRestantes + '</strong> de ' + window.floorTotal + '</p>' +
+                            
+                                            '<div style="display:flex; justify-content:center; align-items:center; gap:25px; margin-top:20px;">' +
+                                                '<button type="button" onclick="window.modificarFloor(-1)" style="padding:10px 25px; font-size:26px; font-weight:bold; cursor:pointer; border-radius:8px; border:none; background:#ff4444; color:white; transition:0.2s;">-</button>' +
+                                                '<span style="font-size:32px; font-weight:bold; min-width:40px; color:#1A1A1A;">' + actualesEnCarrito + '</span>' +
+                                                '<button type="button" onclick="window.modificarFloor(1)" style="padding:10px 25px; font-size:26px; font-weight:bold; cursor:pointer; border-radius:8px; border:none; background:#28a745; color:white; transition:0.2s;">+</button>' +
+                                            '</div>' +
+                                        '</div>';
+                };
+
+                window.modificarFloor = function(cambio) {
+                    let actuales = window.carritoGlobal.filter(function(item) { return item.zona === window.floorIdLimpio; });
+                    if (cambio === 1) {
+                        if (actuales.length >= window.floorDisponibles.length) {
+                            alert("Ya no hay más lugares disponibles en la pista");
                             return;
                         }
-                        document.querySelectorAll('.fil0').forEach(s => s.classList.remove('selected'));
-                        this.classList.add('selected');
-                        document.getElementById('placeholder-info').style.display = 'none';
-                        document.getElementById('detalle-seleccion').style.display = 'block';
-                        let idLimpio = this.id.replace('_', '');
-                        document.getElementById('txt-seccion').innerText = "ZONA " + idLimpio;
-                        document.getElementById('txt-precio').innerText = "Cargando...";
-
-                        const rowsHolder = document.getElementById('seats-rows-holder');
-                        rowsHolder.innerHTML = '<p>Buscando disponibilidad...</p>'; 
-
-                        fetch('asientoServlet?idRecinto=' + idRecintoActual + '&zona=' + idLimpio).then(response => response.json()).then(asientosBD => {
-                            rowsHolder.innerHTML = ''; 
-
-                            if(asientosBD.length > 0 && asientosBD[0].error) {
-                                rowsHolder.innerHTML = '<h3 style="color:red; text-align:center;">' + asientosBD[0].error + '</h3>';
-                                return;
-                            }
-                            if(asientosBD.length === 0) {
-                                rowsHolder.innerHTML = '<p style="color:red;">Esta zona no está disponible</p>';
-                                return;
-                            }
-                            
-                            document.getElementById('txt-precio').innerText = asientosBD[0].precio.toLocaleString();
-
-                            if(idLimpio === 'FLOOR' || asientosBD[0].fila === 'GENERAL') {
-                                let disponibles = asientosBD.filter(a => a.estado === 'DISPONIBLE').length;
-                                rowsHolder.innerHTML = 
-                                    '<div style="background:#e0ffe0; padding:20px; border-radius:10px; border:2px solid #28a745;">' +
-                                        '<h3>ENTRADA GENERAL</h3>' +
-                                        '<p>Lugares disponibles: <strong>' + disponibles + '</strong> / ' + asientosBD.length + '</p>' +
-                                        '<button onclick="agregarGeneralAlCarrito(' + asientosBD[0].id + ', \'' + idLimpio + '\', ' + asientosBD[0].precio + ')" style="padding:10px 20px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer;">Agregar 1 Boleto</button>' +
-                                    '</div>';
-                            } else {
-                                let asientosPorFila = {};
-                                asientosBD.forEach(a => {
-                                    if(!asientosPorFila[a.fila]) asientosPorFila[a.fila] = [];
-                                    asientosPorFila[a.fila].push(a);
-                                });
-
-                                Object.keys(asientosPorFila).forEach(letraFila => {
-                                    const rowDiv = document.createElement('div');
-                                    rowDiv.className = 'seats-row';
-
-                                    const leftLabel = document.createElement('div');
-                                    leftLabel.className = 'row-name';
-                                    leftLabel.innerText = letraFila;
-                                    rowDiv.appendChild(leftLabel);
-
-                                    asientosPorFila[letraFila].forEach(asientoReal => {
-                                        const seat = document.createElement('div');
-                                        let yaSeleccionado = carritoGlobal.find(item => item.id === asientoReal.id);
-
-                                        if(asientoReal.estado !== 'DISPONIBLE' && !yaSeleccionado) {
-                                            seat.className = 'seat-dot occupied';
-                                        } else {
-                                            seat.className = yaSeleccionado ? 'seat-dot selected-by-user' : 'seat-dot';
-
-                                            seat.addEventListener('click', function() {
-                                                if (this.classList.contains('selected-by-user')) {
-                                                    this.classList.remove('selected-by-user');
-                                                    carritoGlobal = carritoGlobal.filter(item => item.id !== asientoReal.id);
-                                                } else {
-                                                    this.classList.add('selected-by-user');
-                                                    carritoGlobal.push({
-                                                        id: asientoReal.id, 
-                                                        zona: idLimpio,
-                                                        fila: asientoReal.fila,
-                                                        numero: asientoReal.numero,
-                                                        precio: asientoReal.precio
-                                                    });
-                                                }
-                                                actualizarCarrito();
-                                            });
-                                        }
-                                        rowDiv.appendChild(seat);
-                                    });
-
-                                    const rightLabel = document.createElement('div');
-                                    rightLabel.className = 'row-name';
-                                    rightLabel.innerText = letraFila;
-                                    rowDiv.appendChild(rightLabel);
-
-                                    rowsHolder.appendChild(rowDiv);
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error al cargar asientos:", error);
-                            rowsHolder.innerHTML = '<p>Error de conexión con el servidor</p>';
+                        let asientoLibre = window.floorDisponibles.find(function(a) { 
+                            return !window.carritoGlobal.some(function(c) { 
+                                return c.id === a.id; 
+                            }); 
                         });
+                        if (asientoLibre) {
+                            window.carritoGlobal.push({
+                                id: asientoLibre.id,
+                                zona: window.floorIdLimpio,
+                                fila: 'GEN',
+                                numero: actuales.length + 1,
+                                precio: asientoLibre.precio
+                            });
+                        }
+                    } else if (cambio === -1) {
+                        if (actuales.length > 0) {
+                            let lastItem = actuales[actuales.length - 1]; 
+                            window.carritoGlobal = window.carritoGlobal.filter(function(item) { return item.id !== lastItem.id; });
+                        }
+                    }
+                    window.actualizarCarrito();
+                    window.renderFloorUI();
+                };
+                document.addEventListener("DOMContentLoaded", function() {
+                    document.getElementById('btn-procesar-compra')?.addEventListener('click', function(){
+                        if(window.carritoGlobal.length === 0){
+                            alert("Selecciona al menos un asiento para continuar al pago");
+                            return;
+                        }
+                        let ids = window.carritoGlobal.map(item => item.id);
+                        let precioText = document.getElementById('txt-precio').innerText.replace(/,/g, '');
+                        let totalText = document.getElementById('txt-total-carrito').innerText.replace(/,/g, '');
+
+                        const inputAsientos = document.getElementById('inputAsientos');
+                        const inputPrecio = document.getElementById('inputPrecio');
+                        const inputTotal = document.getElementById('inputTotal');
+                        const form = document.getElementById('formCompra');
+
+                        if(inputAsientos && inputPrecio && form){
+                            inputAsientos.value = ids.join(',');
+                            inputPrecio.value = precioText; 
+                            inputTotal.value = totalText;
+                            form.submit();
+                        }
                     });
-                });
-
-                function agregarGeneralAlCarrito(idReal, zona, precio) {
-                    let yaSeleccionado = carritoGlobal.find(item => item.zona === 'FLOOR');
-                    if(yaSeleccionado) {
-                        alert("Ya agregaste una entrada general");
-                        return;
-                    }
-                    carritoGlobal.push({
-                        id: idReal,
-                        zona: zona,
-                        fila: 'GEN',
-                        numero: 1,
-                        precio: precio
-                    });
-                    actualizarCarrito();
-                }
-
-                document.getElementById('btn-procesar-compra')?.addEventListener('click', function(){
-                    if(carritoGlobal.length === 0){
-                        alert("Por favor, selecciona un asiento para continuar al pago");
-                        return;
-                    }
-
-                    let ids = carritoGlobal.map(item => item.id);
-
-                    let precioText = document.getElementById('txt-precio').innerText.replace(/,/g, '');
-                    let totalText = document.getElementById('txt-total-carrito').innerText.replace(/,/g, '');
-
-                    const inputAsientos = document.getElementById('inputAsientos');
-                    const inputPrecio = document.getElementById('inputPrecio');
-                    const inputTotal = document.getElementById('inputTotal');
-                    const form = document.getElementById('formCompra');
-
-                    if(inputAsientos && inputPrecio && form){
-                        inputAsientos.value = ids.join(',');
-                        inputPrecio.value = precioText; 
-                        inputTotal.value = totalText;
-
-                        form.submit();
-                    }
                 });
             </script>
     </body>
