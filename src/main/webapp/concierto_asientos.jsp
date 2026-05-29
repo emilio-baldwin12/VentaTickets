@@ -322,7 +322,7 @@
                 <div class="user-actions">
                     <a href="#" class="action-item search-btn">BUSCAR ARTISTA O EVENTO</a>
                     <a href="notificaciones.jsp" class="action-item">NOTIFICACIONES</a>
-                    <a href="#" class="action-item">PERFIL <%= (nombreUser != null) ? "▾" : "" %></a>
+                    <a href="#" class="action-item">PERFIL <%= (nombreUser != null) ? "" : "" %></a>
                     <a href="configuracion.jsp" class="action-item">CONFIGURACIÓN</a>
                     <% if(nombreUser == null) { %>
                         <a href="login.jsp" class="action-item" style="color: var(--accent-green)">INGRESA</a>
@@ -332,11 +332,19 @@
                 </div>
             </div>
             <nav class="main-nav">
-                <ul class="nav-links">
+                <ul class="nav-links" style="align-items: center;">
                     <li><a href="index.jsp">INICIO</a></li>
                     <li><a href="conciertos.jsp" style="color: var(--accent-pink);">CONCIERTOS</a></li>
                     <li><a href="artista.jsp">ARTISTAS</a></li>
                     <li><a href="productos.jsp">PRODUCTOS</a></li>
+                    <% if(nombreUser != null) { %>
+                        <li style="display: flex; align-items: center;">
+                            <a href="carrito.jsp" style="color: var(--accent-green); position: relative; display: flex; align-items: center; gap: 6px;">
+                                <img src="img/auxiliares/carrito.png" alt="Carrito" style="width: 20px; height: auto;">
+                                <span id="header-cart-count" class="badge" style="position: absolute; top: -10px; right: -20px;">0</span>
+                            </a>
+                        </li>
+                    <% } %>
                 </ul>
             </nav>
         </header>
@@ -491,24 +499,48 @@
                 document.addEventListener("DOMContentLoaded", function() {
                     document.getElementById('btn-procesar-compra')?.addEventListener('click', function(){
                         if(window.carritoGlobal.length === 0){
-                            alert("Selecciona al menos un asiento para continuar al pago");
+                            alert("Selecciona al menos un asiento para agregarlo al carrito.");
                             return;
                         }
-                        let ids = window.carritoGlobal.map(item => item.id);
-                        let precioText = document.getElementById('txt-precio').innerText.replace(/,/g, '');
-                        let totalText = document.getElementById('txt-total-carrito').innerText.replace(/,/g, '');
 
-                        const inputAsientos = document.getElementById('inputAsientos');
-                        const inputPrecio = document.getElementById('inputPrecio');
-                        const inputTotal = document.getElementById('inputTotal');
-                        const form = document.getElementById('formCompra');
+                        // Obtenemos los IDs y los unimos con comas
+                        let ids = window.carritoGlobal.map(item => item.id).join(',');
 
-                        if(inputAsientos && inputPrecio && form){
-                            inputAsientos.value = ids.join(',');
-                            inputPrecio.value = precioText; 
-                            inputTotal.value = totalText;
-                            form.submit();
-                        }
+                        // Hacemos una petición POST silenciosa al Servlet
+                        fetch('agregarCarritoServlet', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: 'asientos=' + ids
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.success) {
+                                // 1. Actualizamos el número rojo en el encabezado
+                                const badge = document.getElementById('header-cart-count');
+                                if(badge) badge.innerText = data.totalItems;
+                                
+                                alert("¡Asientos guardados exitosamente en tu carrito!");
+                                
+                                // 2. Opcional: Limpiamos la selección actual para que siga comprando
+                                window.carritoGlobal = [];
+                                window.actualizarCarrito();
+                                
+                                // Limpiamos las bolitas verdes del mapa
+                                document.querySelectorAll('.seat-dot.selected-by-user').forEach(s => {
+                                    s.classList.remove('selected-by-user');
+                                });
+                                
+                                if(typeof window.renderFloorUI === 'function') {
+                                    window.renderFloorUI();
+                                }
+                            } else {
+                                alert("Error al agregar al carrito: " + data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Fetch error:", error);
+                            alert("Hubo un problema de conexión con el servidor.");
+                        });
                     });
                 });
             </script>

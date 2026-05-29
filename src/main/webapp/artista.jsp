@@ -189,32 +189,37 @@
     }
 %>
 
-   <header class="main-header">
-        <div class="header-top">
-            <a href="index.jsp" class="logo">TICKETS</a>
-            <div class="user-actions">
-                <a href="#" class="action-item search-trigger">
-                    <span></span> BUSCAR ARTISTA O EVENTO
-                </a>
-                <a href="notificaciones.jsp" class="action-item">
-                    NOTIFICACIONES <% if(pendientes > 0) { %><span class="badge"><%= pendientes %></span><% } %>
-                </a>
-                <a class="action-item">PERFIL <%= (nombreUser != null) ? "(" + nombreUser.toUpperCase() + ")" : "" %></a>
-                <% if(nombreUser != null) { %>
-                    <a href="LogoutServlet" class="action-item" style="color: #ff4444;">SALIR</a>
-                <% } else { %>
-                    <a href="login.jsp" class="action-item" style="color: var(--accent-green)">INGRESA</a>
-                <% } %>
+    <header class="main-header">
+            <div class="header-top">
+                <a href="index.jsp" class="logo">TICKETS</a>
+                <div class="user-actions">
+                    <a href="#" class="action-item search-btn">BUSCAR ARTISTA O EVENTO</a>
+                    <a href="notificaciones.jsp" class="action-item">NOTIFICACIONES</a>
+                    <a href="#" class="action-item">PERFIL <%= (nombreUser != null) ? "" : "" %></a>
+                    <a href="configuracion.jsp" class="action-item">CONFIGURACIÓN</a>
+                    <% if(nombreUser == null) { %>
+                        <a href="login.jsp" class="action-item" style="color: var(--accent-green)">INGRESA</a>
+                    <% } else { %>
+                        <span class="action-item" style="color: var(--accent-pink)"><%= nombreUser.toUpperCase() %></span>
+                    <% } %>
+                </div>
             </div>
-        </div>
-        <nav class="main-nav">
-            <ul class="nav-links">
-                <li><a href="index.jsp">INICIO</a></li>
-                <li><a href="conciertos.jsp">CONCIERTOS</a></li>
-                <li><a href="artista.jsp" style="color: var(--accent-pink);">ARTISTAS</a></li>
-                <li><a href="productos.jsp">PRODUCTOS</a></li>
-            </ul>
-        </nav>
+            <nav class="main-nav">
+                <ul class="nav-links" style="align-items: center;">
+                    <li><a href="index.jsp">INICIO</a></li>
+                    <li><a href="conciertos.jsp">CONCIERTOS</a></li>
+                    <li><a href="artista.jsp" style="color: var(--accent-pink);">ARTISTAS</a></li>
+                    <li><a href="productos.jsp">PRODUCTOS</a></li>
+                    <% if(nombreUser != null) { %>
+                        <li style="display: flex; align-items: center;">
+                            <a href="carrito.jsp" style="color: var(--accent-green); position: relative; display: flex; align-items: center; gap: 6px;">
+                                <img src="img/auxiliares/carrito.png" alt="Carrito" style="width: 20px; height: auto;">
+                                <span id="header-cart-count" class="badge" style="position: absolute; top: -10px; right: -20px;">0</span>
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
     </header>
 
     <div class="main-wrapper">

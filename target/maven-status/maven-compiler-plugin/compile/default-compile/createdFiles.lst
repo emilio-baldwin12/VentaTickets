@@ -21,6 +21,7 @@ datos\solicitudDAO.class
 modelo\reventaboleto.class
 datos\productosDAO.class
 modelo\boleto.class
+controlador\carritoServlet.class
 datos\boletoDAO.class
 modelo\concierto.class
 controlador\artistaServlet.class
