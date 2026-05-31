@@ -381,139 +381,138 @@
                 </form>   
         </div>
         <script>
-                window.carritoGlobal = [];
-                window.floorDisponibles = [];
-                window.floorIdLimpio = '';
-                window.floorTotal = 0;
-                window.actualizarCarrito = function() {
-                    const listaCarrito = document.getElementById('lista-carrito');
-                    const contenedorCarrito = document.getElementById('carrito-container');
-                    const txtTotalCarrito = document.getElementById('txt-total-carrito');
+            window.carritoGlobal = [];
+            window.floorDisponibles = [];
+            window.floorIdLimpio = '';
+            window.floorTotal = 0;
 
-                    listaCarrito.innerHTML = '';
-                    if (window.carritoGlobal.length === 0) {
-                        contenedorCarrito.style.display = 'none';
-                        txtTotalCarrito.innerText = '0.00';
+            window.actualizarCarrito = function() {
+                const listaCarrito = document.getElementById('lista-carrito');
+                const contenedorCarrito = document.getElementById('carrito-container');
+                const txtTotalCarrito = document.getElementById('txt-total-carrito');
+
+                listaCarrito.innerHTML = '';
+                if (window.carritoGlobal.length === 0) {
+                    contenedorCarrito.style.display = 'none';
+                    txtTotalCarrito.innerText = '0.00';
+                    return;
+                }
+                contenedorCarrito.style.display = 'block';
+                let total = 0;
+                window.carritoGlobal.forEach(item => {
+                    let li = document.createElement('li');
+                    li.style.padding = "8px 0";
+                    li.style.fontSize = "14px";
+                    li.style.display = "flex";
+                    li.style.justifyContent = "space-between";
+                    li.style.borderBottom = "1px solid #eee";
+                    li.innerHTML = '<span><strong>ZONA ' + item.zona + '</strong> - Fila ' + item.fila + ', Asiento ' + item.numero + '</span> ' +
+                                   '<span>$ ' + item.precio.toLocaleString() + '</span>';
+
+                    listaCarrito.appendChild(li);
+                    total += item.precio;
+                });
+                if(listaCarrito.lastChild) {
+                    listaCarrito.lastChild.style.borderBottom = "none";
+                }
+                txtTotalCarrito.innerText = total.toLocaleString();
+            };
+
+            window.renderFloorUI = function() {
+                const rowsHolder = document.getElementById('seats-rows-holder');
+                let actualesEnCarrito = window.carritoGlobal.filter(function(item) { 
+                    return item.zona === window.floorIdLimpio; 
+                }).length;
+                let lugaresRestantes = window.floorDisponibles.length - actualesEnCarrito;
+
+                rowsHolder.innerHTML = '<div style="background:#f8f9fa; padding:25px; border-radius:12px; border:2px solid #ccc; text-align:center; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">' +
+                                           '<h3 style="margin-top:0; color:#1A1A1A; font-size: 22px;">ENTRADA GENERAL (PISTA)</h3>' +
+                                           '<p style="font-size:16px; color:#666;">Lugares disponibles: <strong style="color:#28a745;">' + lugaresRestantes + '</strong> de ' + window.floorTotal + '</p>' +
+
+                                           '<div style="display:flex; justify-content:center; align-items:center; gap:25px; margin-top:20px;">' +
+                                               '<button type="button" onclick="window.modificarFloor(-1)" style="padding:10px 25px; font-size:26px; font-weight:bold; cursor:pointer; border-radius:8px; border:none; background:#ff4444; color:white; transition:0.2s;">-</button>' +
+                                               '<span style="font-size:32px; font-weight:bold; min-width:40px; color:#1A1A1A;">' + actualesEnCarrito + '</span>' +
+                                               '<button type="button" onclick="window.modificarFloor(1)" style="padding:10px 25px; font-size:26px; font-weight:bold; cursor:pointer; border-radius:8px; border:none; background:#28a745; color:white; transition:0.2s;">+</button>' +
+                                           '</div>' +
+                                       '</div>';
+            };
+
+            window.modificarFloor = function(cambio) {
+                let actuales = window.carritoGlobal.filter(function(item) { return item.zona === window.floorIdLimpio; });
+                if (cambio === 1) {
+                    if (actuales.length >= window.floorDisponibles.length) {
+                        alert("Ya no hay más lugares disponibles en la pista");
                         return;
                     }
-                    contenedorCarrito.style.display = 'block';
-                    let total = 0;
-                    window.carritoGlobal.forEach(item => {
-                        let li = document.createElement('li');
-                        li.style.padding = "8px 0";
-                        li.style.fontSize = "14px";
-                        li.style.display = "flex";
-                        li.style.justifyContent = "space-between";
-                        li.style.borderBottom = "1px solid #eee";
-                        li.innerHTML = '<span><strong>ZONA ' + item.zona + '</strong> - Fila ' + item.fila + ', Asiento ' + item.numero + '</span> ' +
-                                       '<span>$ ' + item.precio.toLocaleString() + '</span>';
-
-                        listaCarrito.appendChild(li);
-                        total += item.precio;
+                    let asientoLibre = window.floorDisponibles.find(function(a) { 
+                        return !window.carritoGlobal.some(function(c) { 
+                            return c.id === a.id; 
+                        }); 
                     });
-                    if(listaCarrito.lastChild) {
-                        listaCarrito.lastChild.style.borderBottom = "none";
+                    if (asientoLibre) {
+                        window.carritoGlobal.push({
+                            id: asientoLibre.id,
+                            zona: window.floorIdLimpio,
+                            fila: 'GEN',
+                            numero: actuales.length + 1,
+                            precio: asientoLibre.precio
+                        });
                     }
-                    txtTotalCarrito.innerText = total.toLocaleString();
-                };
+                } else if (cambio === -1) {
+                    if (actuales.length > 0) {
+                        let lastItem = actuales[actuales.length - 1]; 
+                        window.carritoGlobal = window.carritoGlobal.filter(function(item) { return item.id !== lastItem.id; });
+                    }
+                }
+                window.actualizarCarrito();
+                window.renderFloorUI();
+            };
 
-                window.renderFloorUI = function() {
-                    const rowsHolder = document.getElementById('seats-rows-holder');
-                    let actualesEnCarrito = window.carritoGlobal.filter(function(item) { 
-                        return item.zona === window.floorIdLimpio; 
-                    }).length;
-                    let lugaresRestantes = window.floorDisponibles.length - actualesEnCarrito;
+            document.addEventListener("DOMContentLoaded", function() {
+                document.getElementById('btn-procesar-compra')?.addEventListener('click', function(e){
+                    e.preventDefault();
+                    if(window.carritoGlobal.length === 0){
+                        alert("Selecciona al menos un asiento para continuar con el pago.");
+                        return;
+                    }
+                    let ids = window.carritoGlobal.map(item => item.id).join(',');
                     
-                    rowsHolder.innerHTML = '<div style="background:#f8f9fa; padding:25px; border-radius:12px; border:2px solid #ccc; text-align:center; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">' +
-                                               '<h3 style="margin-top:0; color:#1A1A1A; font-size: 22px;">ENTRADA GENERAL (PISTA)</h3>' +
-                                           '<p style="font-size:16px; color:#666;">Lugares disponibles: <strong style="color:#28a745;">' + lugaresRestantes + '</strong> de ' + window.floorTotal + '</p>' +
-                            
-                                            '<div style="display:flex; justify-content:center; align-items:center; gap:25px; margin-top:20px;">' +
-                                                '<button type="button" onclick="window.modificarFloor(-1)" style="padding:10px 25px; font-size:26px; font-weight:bold; cursor:pointer; border-radius:8px; border:none; background:#ff4444; color:white; transition:0.2s;">-</button>' +
-                                                '<span style="font-size:32px; font-weight:bold; min-width:40px; color:#1A1A1A;">' + actualesEnCarrito + '</span>' +
-                                                '<button type="button" onclick="window.modificarFloor(1)" style="padding:10px 25px; font-size:26px; font-weight:bold; cursor:pointer; border-radius:8px; border:none; background:#28a745; color:white; transition:0.2s;">+</button>' +
-                                            '</div>' +
-                                        '</div>';
-                };
+                    let totalPagar = window.carritoGlobal.reduce((suma, item) => suma + item.precio, 0);
+                    let precioUnitario = window.carritoGlobal[0].precio; 
+                    
+                    let urlParams = new URLSearchParams(window.location.search);
+                    let idConcierto = urlParams.get('id') || urlParams.get('idConcierto') || '1';
 
-                window.modificarFloor = function(cambio) {
-                    let actuales = window.carritoGlobal.filter(function(item) { return item.zona === window.floorIdLimpio; });
-                    if (cambio === 1) {
-                        if (actuales.length >= window.floorDisponibles.length) {
-                            alert("Ya no hay más lugares disponibles en la pista");
-                            return;
-                        }
-                        let asientoLibre = window.floorDisponibles.find(function(a) { 
-                            return !window.carritoGlobal.some(function(c) { 
-                                return c.id === a.id; 
-                            }); 
-                        });
-                        if (asientoLibre) {
-                            window.carritoGlobal.push({
-                                id: asientoLibre.id,
-                                zona: window.floorIdLimpio,
-                                fila: 'GEN',
-                                numero: actuales.length + 1,
-                                precio: asientoLibre.precio
-                            });
-                        }
-                    } else if (cambio === -1) {
-                        if (actuales.length > 0) {
-                            let lastItem = actuales[actuales.length - 1]; 
-                            window.carritoGlobal = window.carritoGlobal.filter(function(item) { return item.id !== lastItem.id; });
-                        }
-                    }
-                    window.actualizarCarrito();
-                    window.renderFloorUI();
-                };
-                document.addEventListener("DOMContentLoaded", function() {
-                    document.getElementById('btn-procesar-compra')?.addEventListener('click', function(){
-                        if(window.carritoGlobal.length === 0){
-                            alert("Selecciona al menos un asiento para agregarlo al carrito.");
-                            return;
-                        }
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'pago.jsp'; 
 
-                        // Obtenemos los IDs y los unimos con comas
-                        let ids = window.carritoGlobal.map(item => item.id).join(',');
+                    const inputIds = document.createElement('input');
+                    inputIds.type = 'hidden';
+                    inputIds.name = 'asientosSeleccionados';
+                    inputIds.value = ids;
+                    form.appendChild(inputIds);
+                    const inputTotal = document.createElement('input');
+                    inputTotal.type = 'hidden';
+                    inputTotal.name = 'totalPagar';
+                    inputTotal.value = totalPagar;
+                    form.appendChild(inputTotal);
+                    const inputPrecio = document.createElement('input');
+                    inputPrecio.type = 'hidden';
+                    inputPrecio.name = 'precio';
+                    inputPrecio.value = precioUnitario;
+                    form.appendChild(inputPrecio);
+                    const inputIdConcierto = document.createElement('input');
+                    inputIdConcierto.type = 'hidden';
+                    inputIdConcierto.name = 'idConcierto';
+                    inputIdConcierto.value = idConcierto;
+                    form.appendChild(inputIdConcierto);
 
-                        // Hacemos una petición POST silenciosa al Servlet
-                        fetch('agregarCarritoServlet', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: 'asientos=' + ids
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if(data.success) {
-                                // 1. Actualizamos el número rojo en el encabezado
-                                const badge = document.getElementById('header-cart-count');
-                                if(badge) badge.innerText = data.totalItems;
-                                
-                                alert("¡Asientos guardados exitosamente en tu carrito!");
-                                
-                                // 2. Opcional: Limpiamos la selección actual para que siga comprando
-                                window.carritoGlobal = [];
-                                window.actualizarCarrito();
-                                
-                                // Limpiamos las bolitas verdes del mapa
-                                document.querySelectorAll('.seat-dot.selected-by-user').forEach(s => {
-                                    s.classList.remove('selected-by-user');
-                                });
-                                
-                                if(typeof window.renderFloorUI === 'function') {
-                                    window.renderFloorUI();
-                                }
-                            } else {
-                                alert("Error al agregar al carrito: " + data.error);
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Fetch error:", error);
-                            alert("Hubo un problema de conexión con el servidor.");
-                        });
-                    });
+                    document.body.appendChild(form);
+                    form.submit();
                 });
-            </script>
+            });
+        </script>
     </body>
 </html>
 

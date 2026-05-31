@@ -7,10 +7,12 @@ modelo\notificacion.class
 com\mycompany\ventatickets\resources\JakartaEE8Resource.class
 datos\usuarioDAO.class
 controlador\asientoServlet.class
+modelo\detalleVenta.class
 datos\conciertoDAO.class
 modelo\producto.class
 com\mycompany\ventatickets\JakartaRestConfiguration.class
 modelo\recinto.class
+modelo\carrito.class
 controlador\filaServlet.class
 modelo\artista.class
 datos\filaDAO.class
@@ -23,6 +25,8 @@ datos\productosDAO.class
 modelo\boleto.class
 controlador\carritoServlet.class
 datos\boletoDAO.class
+modelo\ventas.class
+datos\carritoDAO.class
 modelo\concierto.class
 controlador\artistaServlet.class
 datos\notificacionDAO.class

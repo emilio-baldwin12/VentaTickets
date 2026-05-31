@@ -191,69 +191,69 @@
         }
     </style>
 </head>
-<body>
+    <body>
 
-<%
-    String tipoUser = (String) session.getAttribute("tipo_usuario");
-    String nombreUser = (String) session.getAttribute("nombreUsuario");
-    int pendientes = 0;
-    
-    if("ADMIN".equals(tipoUser)) {
-        pendientes = new solicitudDAO().contarPendientes();
-    }
-%>
+        <%
+            String tipoUser = (String) session.getAttribute("tipo_usuario");
+            String nombreUser = (String) session.getAttribute("nombreUsuario");
+            int pendientes = 0;
+
+            if("ADMIN".equals(tipoUser)) {
+                pendientes = new solicitudDAO().contarPendientes();
+            }
+        %>
 
         <jsp:include page="img/auxiliares/encabezado.jsp" />
-        <div class="main-wrapper">
-            <div class="content-main">
-                <div class="section-title">LO MÁS BUSCADO</div>
+            <div class="main-wrapper">
+                <div class="content-main">
+                    <div class="section-title">LO MÁS BUSCADO</div>
 
-                <div class="event-grid">
-                    <div class="event-card">
-                        <div class="event-header">ARTISTA : ID_01</div>
-                        <div class="event-info">
-                            <h3>Vans Warped Tour</h3>
-                            <p>> Autodromo Hnos. Rodriguez</p>
-                            <p>> Fecha: 15/06/2026</p>
+                    <div class="event-grid">
+                        <div class="event-card">
+                            <div class="event-header">ARTISTA : ID_01</div>
+                            <div class="event-info">
+                                <h3>Vans Warped Tour</h3>
+                                <p>> Autodromo Hnos. Rodriguez</p>
+                                <p>> Fecha: 15/06/2026</p>
+                            </div>
+                        </div>
+
+                        <div class="event-card">
+                            <div class="event-header">ARTISTA : ID_02</div>
+                            <div class="event-info">
+                                <h3>Mentiras, El Musical</h3>
+                                <p>> Teatro Aldama</p>
+                                <p>> Disponibilidad: Alta</p>
+                            </div>
+                        </div>
+
+                        <div class="event-card">
+                            <div class="event-header">ARTISTA : ID_03</div>
+                            <div class="event-info">
+                                <h3>Zayn</h3>
+                                <p>> Estadio GNP Seguros</p>
+                                <p>> Estado: Preventa</p>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="event-card">
-                        <div class="event-header">ARTISTA : ID_02</div>
-                        <div class="event-info">
-                            <h3>Mentiras, El Musical</h3>
-                            <p>> Teatro Aldama</p>
-                            <p>> Disponibilidad: Alta</p>
-                        </div>
+                <div class="sidebar">
+                    <div class="side-card">
+                        <h4>SISTEMA</h4>
+                        <p>Bienvenido al vendedor de boletos derrocador.</p>
                     </div>
-
-                    <div class="event-card">
-                        <div class="event-header">ARTISTA : ID_03</div>
-                        <div class="event-info">
-                            <h3>Zayn</h3>
-                            <p>> Estadio GNP Seguros</p>
-                            <p>> Estado: Preventa</p>
-                        </div>
+                    <div class="side-card" style="border-color: var(--accent-pink);">
+                        <h4 style="color: #d81b60;">EXPERIENCIAS+</h4>
+                        <p>Consulta los paquetes VIP disponibles para ID_03.</p>
                     </div>
                 </div>
             </div>
+        <script>
+            function toggleMenu() {
+                alert("Abriendo menú de perfil...");
+            }
+        </script>
 
-            <div class="sidebar">
-                <div class="side-card">
-                    <h4>SISTEMA</h4>
-                    <p>Bienvenido al vendedor de boletos derrocador.</p>
-                </div>
-                <div class="side-card" style="border-color: var(--accent-pink);">
-                    <h4 style="color: #d81b60;">EXPERIENCIAS+</h4>
-                    <p>Consulta los paquetes VIP disponibles para ID_03.</p>
-                </div>
-            </div>
-        </div>
-<script>
-    function toggleMenu() {
-        alert("Abriendo menú de perfil...");
-    }
-</script>
-
-</body>
+    </body>
 </html>

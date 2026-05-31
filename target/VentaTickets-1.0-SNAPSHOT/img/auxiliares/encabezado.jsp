@@ -94,7 +94,7 @@
     }
     
     .nav-links a:hover, 
-    .nav-links a.active { /* Esta regla ilumina la pestaña activa Y cuando pasas el mouse */
+    .nav-links a.active { /* Esta regla ilumina la pestaña activa Y cuando se pasa el mouse */
         color: var(--accent-pink);
     }
     
@@ -125,7 +125,6 @@
     </div>
     <nav class="main-nav">
         <ul class="nav-links">
-            <%-- Identifica la URL y le pone la clase 'active' si coincide --%>
             <li><a href="index.jsp" class="<%= (uri.endsWith("index.jsp")) ? "active" : "" %>">INICIO</a></li>
             
             <li><a href="conciertos.jsp" class="<%= (uri.endsWith("conciertos.jsp") || uri.endsWith("concierto_asientos.jsp")) ? "active" : "" %>">CONCIERTOS</a></li>

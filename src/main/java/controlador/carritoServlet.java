@@ -5,7 +5,6 @@
 package controlador;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,33 +19,31 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "carritoServlet", urlPatterns = {"/carritoServlet"})
 public class carritoServlet extends HttpServlet {
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        String asientos=request.getParameter("asientos");
-        PrintWriter out=response.getWriter();
         
-        try{
-            HttpSession session=request.getSession();
-            ArrayList<String>carrito=(ArrayList<String>)session.getAttribute("listaCarrito");
-            if(carrito==null){
-                carrito=new ArrayList<>();
-            }
-            if(asientos!=null && !asientos.trim().isEmpty()){
-                String[] tokens=asientos.split(",");
-                for(String id: tokens){
-                    if(!carrito.contains(id)){
-                        carrito.add(id);
-                    }
+        String asientosParam = request.getParameter("asientosComprados");
+        
+        HttpSession session = request.getSession();
+        
+        ArrayList<String> carrito = (ArrayList<String>) session.getAttribute("carritoBoletos");
+        if (carrito == null) {
+            carrito = new ArrayList<>();
+        }
+        
+        if (asientosParam != null && !asientosParam.trim().isEmpty()) {
+            String[] idsNuevos = asientosParam.split(",");
+            for (String id : idsNuevos) {
+                if (!carrito.contains(id.trim())) {
+                    carrito.add(id.trim());
                 }
             }
-            session.setAttribute("listarCarrito",carrito);
-            out.print("{\"succes\": true, \"totalItems\": " + carrito.size() +"}");
-        }catch(Exception e){
-            out.print("{\"success\": false, \"error\": \"" + e.getMessage() + "\"}");
         }
+        
+        session.setAttribute("carritoBoletos", carrito);
+        
+        response.sendRedirect("carrito.jsp");
     }
-
 }
