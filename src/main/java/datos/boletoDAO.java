@@ -20,7 +20,7 @@ public class boletoDAO {
 
         try {
             conn = conexion.getConnection();
-            conn.setAutoCommit(false); //Para iniciar las Transacciones
+            conn.setAutoCommit(false);//Para iniciar las Transacciones
             String sqlOrden = "Insert into Ordenes(id_cliente,precio_total,estado,fecha) values(?,?,?,current_date) returning id";
             orden = conn.prepareStatement(sqlOrden);
             orden.setInt(1, idUsuario);
@@ -82,9 +82,9 @@ public class boletoDAO {
         
         try{
             conn=conexion.getConnection();
-            String sql="Select b.*,r.nombre as nombreRecinto,c.fecha " +
-                       "From Boletos b " +
-                        "Join Concierto c on b.id_concierto=c.id " +
+            String sql= "Select b.*, r.nombre as nombreRecinto, c.fecha " +
+                        "From Boletos b " +
+                        "Join Conciertos c on b.id_concierto=c.id " +
                         "Join Recintos r on c.id_recinto=r.id " +
                         "Where b.id_orden=?";
         

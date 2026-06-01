@@ -8,17 +8,15 @@
 <%@page import="datos.boletoDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
-    String idOrdenStr = request.getParameter("id_orden");
-    List<boleto> misBoletos = null;
-
-    if (idOrdenStr != null && !idOrdenStr.isEmpty()) {
-        try {
-            int idOrden = Integer.parseInt(idOrdenStr);
-            misBoletos = new boletoDAO().listarOrden(idOrden);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    String idOrdenParam = request.getParameter("id_orden");
+    if(idOrdenParam == null) {
+        response.sendRedirect("index.jsp");
+        return;
     }
+    
+    int idOrden = Integer.parseInt(idOrdenParam);
+    boletoDAO dao = new boletoDAO();
+    List<boleto> misBoletos = dao.listarOrden(idOrden);
 %>
 <!DOCTYPE html>
 <html>
@@ -114,37 +112,31 @@
         </style>
     </head>
     <body>
-
         <div class="container">
-            <div class="success-icon">✔</div>
-            <h1>¡Gracias por tu compra!</h1>
-            <p>Tu orden <strong>#<%= idOrdenStr %></strong> ha sido procesada con éxito.</p>
+            <div class="success-msg">
+                <h2>Pago Exitoso</h2>
+                <p>Orden #<%= idOrden %> completada. Aquí están tus boletos.</p>
+            </div>
 
-            <% if (misBoletos != null && !misBoletos.isEmpty()) { 
-                for (boleto b : misBoletos) { %>
-                <div class="ticket">
+            <% for(boleto b : misBoletos) { %>
+                <div class="ticket-card">
                     <div class="ticket-info">
-                        <h3><%= b.getrecinto() %></h3>
-                        <p>Fecha: <strong><%= b.getfecha() %></strong></p>
-                        <p>Zona: <strong><%= b.getzona() %></strong></p>
-                        <p>Asiento ID: <strong><%= b.getidasiento() %></strong></p>
+                        <h3 style="margin:0 0 10px 0; color:#1A1A1A;">Recinto: <%= b.getrecinto() %></h3>
+                        <p style="margin:5px 0; color:#555;"><strong>Fecha:</strong> <%= b.getfecha() %></p>
+                        <p style="margin:5px 0; color:#555;"><strong>Zona:</strong> <%= b.getzona() %></p>
+                        <p style="margin:5px 0; color:#555;"><strong>Asiento ID:</strong> <%= b.getidasiento() %></p>
+                        <p style="margin:5px 0; color:#555;"><strong>Estado:</strong> <%= b.getestado() %></p>
                     </div>
-                    <div class="ticket-qr">
-                        <img class="qr-img" 
-                             src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<%= b.getcodigoqr() %>&choe=UTF-8" 
-                             alt="QR Code">
-                        <div class="qr-code-text"><%= b.getcodigoqr().substring(0, 8) %>...</div>
+                    <div class="qr-placeholder">
+                        <%= b.getcodigoqr() %>
                     </div>
-                </div>
-            <%  } 
-            } else { %>
-                <div style="padding: 20px; background: #fff3cd; color: #856404; border-radius: 8px;">
-                    No se encontraron detalles de los boletos. Por favor revisa tu historial en el perfil.
                 </div>
             <% } %>
 
-            <a href="index.jsp" class="btn-home">Volver al Inicio</a>
+            <div style="text-align: center;">
+                <a href="carrito.jsp" class="btn-inicio">Ver mis boletos en el carrito</a>
+                <a href="index.jsp" class="btn-inicio" style="background: #8EACB8;">Volver al Inicio</a>
+            </div>
         </div>
-
     </body>
 </html>
