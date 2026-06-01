@@ -162,7 +162,12 @@
                 const rowsHolder = document.getElementById('seats-rows-holder');
                 rowsHolder.innerHTML = '<p>Buscando disponibilidad...</p>'; 
 
-                fetch('asientoServlet?idRecinto=' + idRecintoActual + '&zona=' + idLimpio)
+                // Extraemos el ID del concierto de la barra de direcciones
+                let urlParams = new URLSearchParams(window.location.search);
+                let idConciertoActual = urlParams.get('id') || urlParams.get('idConcierto') || '1';
+
+                // Enviamos idRecinto, idConcierto y zona
+                fetch('asientoServlet?idRecinto=' + idRecintoActual + '&idConcierto=' + idConciertoActual + '&zona=' + idLimpio)
                 .then(response => response.json())
                 .then(asientosBD => {
                     rowsHolder.innerHTML = ''; 
@@ -201,9 +206,9 @@
                             asientosPorFila[letraFila].forEach(asientoReal => {
                                 const seat = document.createElement('div');
                                 let yaSeleccionado = window.carritoGlobal.find(item => item.id === asientoReal.id);
-
-                                if(asientoReal.estado !== 'DISPONIBLE' && !yaSeleccionado) {
+                                if(asientoReal.estado === 'VENDIDO' || asientoReal.estado === 'OCUPADO' || (asientoReal.estado !== 'DISPONIBLE' && !yaSeleccionado)) {
                                     seat.className = 'seat-dot occupied';
+                                    seat.style.pointerEvents = 'none';
                                 } else {
                                     seat.className = yaSeleccionado ? 'seat-dot selected-by-user' : 'seat-dot';
 

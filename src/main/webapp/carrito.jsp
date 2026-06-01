@@ -87,21 +87,20 @@
 
         <div class="container">
             <h1>Tus Compras</h1>
-
-            <%
-                ArrayList<String> idsCarrito = (ArrayList<String>) session.getAttribute("carritoBoletos"); 
-                if (idsCarrito == null || idsCarrito.isEmpty()) {
-            %>
-                <div class="empty-cart">
-                    <p>Tu carrito está vacío</p>
-                    <a href="conciertos.jsp" style="color: #8EACB8; font-weight: bold; text-decoration: none; font-size: 20px;">Ver Conciertos -></a>
-                </div>
-            <%
-                } else {
+                <%
+                    int idUsuarioActual = (session.getAttribute("idusuario") != null) ? (int) session.getAttribute("idusuario") : 0;
                     carritoDAO dao = new carritoDAO();
-                    List<carrito> boletos = dao.obtenerDetallesCarrito(idsCarrito);
-                    double total = 0;
-            %>
+                    List<carrito> boletos = dao.obtenerMisBoletos(idUsuarioActual);
+                    if (idUsuarioActual == 0 || boletos.isEmpty()) {
+                %>
+                    <div class="empty-cart">
+                        <p>Aún no tienes boletos comprados.</p>
+                        <a href="conciertos.jsp" style="color: #8EACB8; font-weight: bold; text-decoration: none; font-size: 20px;">Ver Conciertos -></a>
+                    </div>
+                <%
+                    } else {
+                        double total = 0;
+                %>
                 <table>
                     <thead>
                         <tr>
@@ -129,15 +128,12 @@
                         <% } %>
                     </tbody>
                 </table>
+                    <div class="total-row">
+                    Total pagado: $<%= String.format("%,.2f", total) %>
+                    </div>
 
-                <div class="total-row">
-                    Total a pagar: $<%= String.format("%,.2f", total) %>
-                </div>
-
-                <div style="overflow: hidden;">
-                    <form action="pago.jsp" method="POST">
-                        <button type="submit" class="btn-pagar">Proceder al Pago Seguros</button>
-                    </form>
+                <div style="overflow: hidden; margin-top: 20px;">
+                      <a href="index.jsp" style="float: right; background-color: #8EACB8; color: white; padding: 15px 30px; border-radius: 8px; font-size: 18px; font-weight: bold; text-decoration: none; transition: 0.3s;">Volver al Inicio</a>
                 </div>
             <% } %>
         </div>

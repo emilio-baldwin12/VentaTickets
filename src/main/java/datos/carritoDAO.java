@@ -15,26 +15,15 @@ import modelo.carrito;
  * @author luise
  */
 public class carritoDAO {
-    public List<carrito> obtenerDetallesCarrito(ArrayList<String> idsAsientos) {
+   public List<carrito> obtenerMisBoletos(int idUsuario) {
         List<carrito> listaBoletos = new ArrayList<>();
-        
-        if (idsAsientos == null || idsAsientos.isEmpty()) {
-            return listaBoletos;
-        }
-
-        StringBuilder placeholders = new StringBuilder();
-        for (int i = 0; i < idsAsientos.size(); i++) {
-            placeholders.append("?");
-            if (i < idsAsientos.size() - 1) {
-                placeholders.append(",");
-            }
-        }
-
-        String sql = "select a.id as idasiento, s.nombre as zona, a.fila, a.numero, a.precio, c.id as idconcierto, c.nombre as nombreconcierto, c.ciudad, c.fecha as fechaconcierto " +
-                     "from Asientos a " +
+        String sql = "Select a.id as idasiento, s.nombre as zona, a.fila, a.numero, b.precio_original as precio, c.id as idconcierto, c.nombre as nombreconcierto, c.ciudad, c.fecha as fechaconcierto " +
+                     "from Boletos b " +
+                     "join Asientos a on b.id_asiento = a.id " +
                      "join Secciones s on a.id_seccion = s.id " +
-                     "join Conciertos c on s.id_recinto = c.id_recinto " +
-                     "where a.id in (" + placeholders.toString() + ")";
+                     "join Conciertos c on b.id_concierto = c.id " +
+                     "where b.id_usuario = ? and b.estado = 'VENDIDO' " +
+                     "order by c.fecha desc";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -43,11 +32,7 @@ public class carritoDAO {
         try {
             conn = conexion.getConnection();
             ps = conn.prepareStatement(sql);
-
-            for (int i = 0; i < idsAsientos.size(); i++) {
-                ps.setInt(i + 1, Integer.parseInt(idsAsientos.get(i).trim()));
-            }
-
+            ps.setInt(1, idUsuario);
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -64,13 +49,12 @@ public class carritoDAO {
                 
                 listaBoletos.add(boleto);
             }
-
         } catch (Exception e) {
-            System.out.println("Error al obtener el carrito: " + e.getMessage());
+            System.out.println("Error al obtener mis compras: " + e.getMessage());
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception e) {}
-            try { if (ps != null) ps.close(); } catch (Exception e) {}
-            try { if (conn != null) conn.close(); } catch (Exception e) {}
+            conexion.close(rs);
+            conexion.close(ps);
+            conexion.close(conn);
         }
 
         return listaBoletos;

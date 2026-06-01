@@ -181,31 +181,7 @@
     </style>
 </head>
 <body>
-
-    <header class="main-header">
-        <div class="header-top">
-            <a href="index.jsp" class="logo">TICKETS</a>
-            <div class="user-actions">
-                <a href="#" class="action-item search-btn">BUSCAR ARTISTA O EVENTO</a>
-                <a href="notificaciones.jsp" class="action-item">NOTIFICACIONES</a>
-                <a href="#" class="action-item">PERFIL <%= (nombreUser != null) ? "▾" : "" %></a>
-                <a href="configuracion.jsp" class="action-item">CONFIGURACIÓN</a>
-                <% if(nombreUser == null) { %>
-                    <a href="login.jsp" class="action-item" style="color: var(--accent-green)">INGRESA</a>
-                <% } else { %>
-                    <span class="action-item" style="color: var(--accent-pink)"><%= nombreUser.toUpperCase() %></span>
-                <% } %>
-            </div>
-        </div>
-        <nav class="main-nav">
-            <ul class="nav-links">
-                <li><a href="index.jsp">INICIO</a></li>
-                <li><a href="conciertos.jsp" style="color: var(--accent-pink);">CONCIERTOS</a></li>
-                <li><a href="artista.jsp">ARTISTAS</a></li>
-                <li><a href="productos.jsp">PRODUCTOS</a></li>
-            </ul>
-        </nav>
-    </header>
+    <jsp:include page="img/auxiliares/encabezado.jsp" />
 
     <form id="formFinal" action="boletoServlet" method="POST" style="display: none;">
         <input type="hidden" name="idConcierto" value="<%= idConcierto %>">

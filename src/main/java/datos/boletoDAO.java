@@ -20,7 +20,8 @@ public class boletoDAO {
 
         try {
             conn = conexion.getConnection();
-            conn.setAutoCommit(false);//Para iniciar las Transacciones
+            conn.setAutoCommit(false);//Iniciamos transacción
+
             String sqlOrden = "Insert into Ordenes(id_cliente,precio_total,estado,fecha) values(?,?,?,current_date) returning id";
             orden = conn.prepareStatement(sqlOrden);
             orden.setInt(1, idUsuario);
@@ -32,34 +33,31 @@ public class boletoDAO {
             if (rs.next()) {
                 id_orden = rs.getInt(1);
             }
-            String sqlBoleto = "Update Boletos SET id_usuario=?, id_orden = ?, estado= 'VENDIDO', codigo_qr=? " +
-                               "Where id_concierto =? and id_asiento=? and estado='DISPONIBLE'";
+            String sqlBoleto = "INSERT INTO Boletos (id_usuario, id_orden, estado, codigo_qr, id_concierto, id_asiento, zona, precio_original) " +
+                               "VALUES (?, ?, 'VENDIDO', ?, ?, ?, (SELECT s.nombre FROM Asientos a JOIN Secciones s ON a.id_seccion = s.id WHERE a.id = ?), ?)";
+            
             boleto = conn.prepareStatement(sqlBoleto);
             for (int idasiento : idAsientos) {
-                String qr = UUID.randomUUID().toString();//Genera el qr
+                String qr =UUID.randomUUID().toString();//Genera el QR
                 boleto.setInt(1, idUsuario);
                 boleto.setInt(2, id_orden);
                 boleto.setString(3, qr); 
                 boleto.setInt(4, idConcierto);
                 boleto.setInt(5, idasiento);
-
-                int filas_afectadas = boleto.executeUpdate();
-
-                if (filas_afectadas == 0) {//Si la fila no se actualizó fue porque alguien mas lo comrpo jussto en el moemento
-                    conn.rollback();
-                    return false;
-                }
+                boleto.setInt(6, idasiento); //Se pasa de nuevo para la subconsulta de la zona
+                boleto.setDouble(7, precio);
+                boleto.executeUpdate(); // Si alguien más ya compró este asiento se envia al catch.
             }
 
-            conn.commit();//Guardamos 
+            conn.commit();//Confirmamos los cambios
             return true;
 
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) {
                 try {
-                    conn.rollback(); // Por si se truena 
-                } catch (SQLException ex) {
+                    conn.rollback();//Cancelamos la orden si algo falla
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -71,8 +69,6 @@ public class boletoDAO {
             conexion.close(conn);
         }
     }
-    
-    
     
     public List<boleto>listarOrden(int idOrden){
         List<boleto>lista=new ArrayList<>();

@@ -114,7 +114,7 @@
         <div class="user-actions">
             <a href="#" class="action-item search-btn">BUSCAR ARTISTA O EVENTO</a>
             <a href="notificaciones.jsp" class="action-item">NOTIFICACIONES</a>
-            <a href="#" class="action-item">PERFIL <%= (nombreUser != null) ? "▾" : "" %></a>
+            <a href="#" class="action-item">PERFIL <%= (nombreUser != null) ? "" : "" %></a>
             <a href="configuracion.jsp" class="action-item">CONFIGURACIÓN</a>
             <% if(nombreUser == null) { %>
                 <a href="login.jsp" class="action-item" style="color: var(--accent-green)">INGRESA</a>

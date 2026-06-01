@@ -30,21 +30,30 @@ public class asientoServlet extends HttpServlet {
         ResultSet rs = null;
         
         try {
+            String idConciertoStr = request.getParameter("idConcierto");
+
             if(idRecintoStr == null || nombrezona == null){
                 out.print("[]");
                 return;
             }
             int idRecinto = Integer.parseInt(idRecintoStr);
+            int idConcierto = (idConciertoStr != null && !idConciertoStr.isEmpty()) ? Integer.parseInt(idConciertoStr) : 1; 
+
             conn = conexion.getConnection();
-            String sql = "select a.id, a.fila, a.numero, a.precio, a.estado " +
+            
+            String sql = "select a.id, a.fila, a.numero, a.precio, COALESCE(b.estado, a.estado) as estado " +
                          "from Asientos a " +
                          "join Secciones s on a.id_seccion = s.id " +
+                         "left join Boletos b on a.id = b.id_asiento and b.id_concierto = ? " +
                          "where s.id_recinto = ? and cast(s.nombre as varchar) = ? " +
                          "order by a.fila, a.numero";
             
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, idRecinto);
-            ps.setString(2, nombrezona);
+            
+            ps.setInt(1, idConcierto); 
+            ps.setInt(2, idRecinto);  
+            ps.setString(3, nombrezona); 
+            
             rs = ps.executeQuery();
             
             StringBuilder json = new StringBuilder("[");
