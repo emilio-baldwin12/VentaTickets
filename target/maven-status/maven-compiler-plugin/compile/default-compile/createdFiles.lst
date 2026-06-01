@@ -4,6 +4,7 @@ controlador\registroServlet.class
 datos\artistaDAO.class
 modelo\fila.class
 modelo\notificacion.class
+controlador\admin_artistaServlet.class
 com\mycompany\ventatickets\resources\JakartaEE8Resource.class
 datos\usuarioDAO.class
 controlador\asientoServlet.class

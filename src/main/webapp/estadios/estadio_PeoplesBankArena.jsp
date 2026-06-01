@@ -162,11 +162,9 @@
                 const rowsHolder = document.getElementById('seats-rows-holder');
                 rowsHolder.innerHTML = '<p>Buscando disponibilidad...</p>'; 
 
-                // Extraemos el ID del concierto de la barra de direcciones
                 let urlParams = new URLSearchParams(window.location.search);
                 let idConciertoActual = urlParams.get('id') || urlParams.get('idConcierto') || '1';
 
-                // Enviamos idRecinto, idConcierto y zona
                 fetch('asientoServlet?idRecinto=' + idRecintoActual + '&idConcierto=' + idConciertoActual + '&zona=' + idLimpio)
                 .then(response => response.json())
                 .then(asientosBD => {

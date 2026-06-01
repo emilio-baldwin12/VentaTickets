@@ -10,9 +10,9 @@ import modelo.concierto;
 public class artistaDAO {
    public List<artista> obtenerArtistas(){
        List<artista> lista = new ArrayList<>();
-       String sql = "SELECT u.id,u.nombre, u.apellido, a.genero,a.foto " +
-                    "FROM Usuarios u " +
-                    "JOIN Artistas a ON u.id=a.id_usuario";
+       String sql = "select u.id,u.nombre, u.apellido, a.genero,a.foto " +
+                    "from Usuarios u " +
+                    "join Artistas a ON u.id=a.id_usuario";
        
        try(Connection conn=conexion.getConnection();
             PreparedStatement ps=conn.prepareStatement(sql);
@@ -36,10 +36,10 @@ public class artistaDAO {
    
    public artista obtenerPerfil(int idartista){
        artista art=null;
-       String sql="SELECT u.id,u.nombre,u.apellido,a.genero, a.foto, a.banner, a.descripcion,a.total_seguidores " +
-                   "FROM Usuarios u " +
-                   "JOIN Artistas a ON u.id=a.id_usuario " +
-                   "WHERE u.id=?";
+       String sql="Select u.id,u.nombre,u.apellido,a.genero, a.foto, a.banner, a.descripcion,a.total_seguidores " +
+                   "from Usuarios u " +
+                   "join Artistas a ON u.id=a.id_usuario " +
+                   "where u.id=?";
        
        try(Connection conn = conexion.getConnection();
             PreparedStatement ps=conn.prepareStatement(sql)){
@@ -66,7 +66,7 @@ public class artistaDAO {
    
    public boolean esSeguidor(int idusuario, int idartista){
        boolean siguiendo= false;
-       String sql="SELECT 1 FROM Seguidores WHERE id_usuario= ? AND id_artista=?";
+       String sql="select 1 from Seguidores where id_usuario= ? and id_artista=?";
        
        try(Connection conn= conexion.getConnection();
            PreparedStatement ps= conn.prepareStatement(sql)){
@@ -85,7 +85,7 @@ public class artistaDAO {
    
    public List<cancion> obtenerCanciones(int idartista){
        List<cancion> lista = new ArrayList<>();
-       String sql= "SELECT titulo,url,foto FROM Canciones WHERE id_artista = ?";
+       String sql= "select titulo,url,foto from Canciones where id_artista = ?";
        
        try (Connection conn=config.conexion.getConnection();
             PreparedStatement ps=conn.prepareStatement(sql)){
@@ -112,8 +112,8 @@ public class artistaDAO {
         ResultSet rs = null;
         boolean ok = false;
 
-        String sqlUsu = "INSERT INTO Usuarios (nombre, apellido, correo, contrasena, tipousuario) VALUES (?, ?, ?, ?, 'ARTISTA')";
-        String sqlArt = "INSERT INTO Artistas (id_usuario, descripcion, genero, foto) VALUES (?, ?, ?, ?)";
+        String sqlUsu = "insert into Usuarios (nombre, apellido, correo, contrasena, tipousuario) VALUES (?, ?, ?, ?, 'ARTISTA')";
+        String sqlArt = "insert into Artistas (id_usuario, descripcion, genero, foto, banner) VALUES (?, ?, ?, ?, ?)";
 
         try {
             conn = config.conexion.getConnection();
@@ -135,6 +135,7 @@ public class artistaDAO {
                 psArt.setString(2, art.getdescripcion());
                 psArt.setString(3, art.getgenero());
                 psArt.setString(4, art.getfoto());
+                psArt.setString(5, art.getbanner());
                 psArt.executeUpdate();
 
                 conn.commit();//Se guarda todo
@@ -199,5 +200,18 @@ public class artistaDAO {
            e.printStackTrace();
        }
        return lista;
+   }
+   
+   public boolean eliminarArtista(int idUsuario){
+       String sql="delete from Usuarios where id=? and tipousuario='ARTISTA'";
+       try(Connection conn=conexion.getConnection();
+           PreparedStatement ps=conn.prepareStatement(sql)){
+           
+           ps.setInt(1,idUsuario);
+           return ps.executeUpdate() > 0;
+       }catch(SQLException e){
+           System.out.println("Error al eliminar artista: "+ e.getMessage());
+           return false;
+       }
    }
 }
