@@ -12,6 +12,7 @@ modelo\detalleVenta.class
 datos\conciertoDAO.class
 modelo\producto.class
 com\mycompany\ventatickets\JakartaRestConfiguration.class
+controlador\artista_productoServlet.class
 modelo\recinto.class
 modelo\carrito.class
 controlador\filaServlet.class

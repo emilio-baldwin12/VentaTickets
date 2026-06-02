@@ -192,7 +192,7 @@
         <div class="artist-grid">
             <%
                 productosDAO dao = new productosDAO();
-                List<producto> lista = dao.obtenerProductos();
+                List<producto> lista = dao.obtenerTodosLosProductos();
                 for(producto p : lista) {
             %>
             <%

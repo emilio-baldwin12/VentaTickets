@@ -7,6 +7,7 @@ package modelo;
  */
 public class producto {
     private int id;
+    private int id_artista;
     private String nombre;
     private String descripcion;
     private double precio;
@@ -22,6 +23,13 @@ public class producto {
     }
     public void setid(int id){
         this.id=id;
+    }
+    
+    public int getidartista(){
+        return id_artista;
+    }
+    public void setidartista(int id_artista){
+        this.id_artista=id_artista;
     }
     
     public String getnombre(){

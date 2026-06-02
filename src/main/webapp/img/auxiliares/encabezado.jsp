@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     String nombreUser = (String) session.getAttribute("nombreusuario");
+    String rolUser = (String) session.getAttribute("tipousuario");
     String uri = request.getRequestURI();//La ruta de la pg para poder iluminarla
 
 %>
@@ -83,6 +84,7 @@
         margin: 0;
         padding: 12px 0;
         align-items: center;
+        width: 100%;
     }
     .nav-links a {
         color: white;
@@ -137,6 +139,24 @@
                     <a href="carrito.jsp" class="<%= (uri.endsWith("carrito.jsp")) ? "active" : "" %>" style="color: var(--accent-green); position: relative; display: flex; align-items: center; gap: 6px;">
                         <img src="img/auxiliares/carrito.png" alt="Carrito" style="width: 20px; height: auto;">
                         <span id="header-cart-count" class="badge" style="position: absolute; top: -10px; right: -20px;">0</span>
+                    </a>
+                </li>
+            <% } %>
+            
+            <% if(rolUser != null && rolUser.equals("ADMIN")) { %>
+                <li style="display: flex; align-items: center; margin-left: auto;">
+                    <a href="admin_artistas.jsp" class="<%= (uri.endsWith("admin_artistas.jsp")) ? "active" : "" %>" style="display: flex; align-items: center; gap: 6px; color: var(--accent-pink);">
+                        ARTISTAS 
+                        <img src="img/auxiliares/lapiz.png" alt="Editar" style="width: 14px; height: auto;">
+                    </a>
+                </li>
+            <% } %>
+            
+            <% if(rolUser != null && rolUser.equals("ARTISTA")) { %>
+                <li style="display: flex; align-items: center; margin-left: auto;">
+                    <a href="artista_productos.jsp" class="<%= (uri.endsWith("artista_productos.jsp")) ? "active" : "" %>" style="display: flex; align-items: center; gap: 6px; color: var(--accent-green);">
+                        MIS PRODUCTOS 
+                        <img src="img/auxiliares/lapiz.png" alt="Editar" style="width: 14px; height: auto;">
                     </a>
                 </li>
             <% } %>
