@@ -19,6 +19,7 @@ controlador\filaServlet.class
 modelo\artista.class
 datos\filaDAO.class
 modelo\administrador.class
+modelo\productoCarrito.class
 config\conexion.class
 controlador\loginServlet.class
 datos\solicitudDAO.class

@@ -205,10 +205,20 @@
 
                     <img src="img/productos/<%= fotoPath %>" class="artist-img" alt="<%= p.getnombre() %>">
 
-                    <div class="artist-info">
+                   <div class="artist-info">
                         <h3><%= p.getnombre() %></h3>
-                        <p style="color: #d32f2f; font-size: 18px;">$ <%= p.getprecio() %></p>
-                        <p style="margin-top: 10px; cursor: pointer;">> AGREGAR AL CARRITO</p>
+                        <p style="color: #d32f2f; font-size: 18px;">$ <%= String.format("%,.2f", p.getprecio()) %></p>
+                        
+                        <form action="carritoServlet" method="POST" style="margin-top: 10px;">
+                            <input type="hidden" name="accion" value="agregar">
+                            <input type="hidden" name="idProducto" value="<%= p.getid() %>">
+                            <input type="hidden" name="nombre" value="<%= p.getnombre() %>">
+                            <input type="hidden" name="precio" value="<%= p.getprecio() %>">
+                            <input type="hidden" name="foto" value="<%= fotoPath %>">
+                            <button type="submit" style="background: none; border: none; color: var(--entity-header); font-weight: bold; cursor: pointer; padding: 0; font-size: 14px;">
+                                > AGREGAR AL CARRITO
+                            </button>
+                        </form>
                     </div>
                 </div>
             <% } %>

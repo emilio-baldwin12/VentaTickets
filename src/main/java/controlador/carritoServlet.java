@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import modelo.productoCarrito;
+import java.util.List;
 
 /**
  *
@@ -24,26 +26,68 @@ public class carritoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String asientosParam = request.getParameter("asientosComprados");
-        
+        request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
-        
-        ArrayList<String> carrito = (ArrayList<String>) session.getAttribute("carritoBoletos");
-        if (carrito == null) {
-            carrito = new ArrayList<>();
-        }
+        String asientosParam = request.getParameter("asientosComprados");
+        String accion=request.getParameter("accion");
         
         if (asientosParam != null && !asientosParam.trim().isEmpty()) {
+            ArrayList<String> carritoboletos = (ArrayList<String>) session.getAttribute("carritoBoletos");
+            if (carritoboletos == null) {
+                carritoboletos = new ArrayList<>();
+            }
             String[] idsNuevos = asientosParam.split(",");
             for (String id : idsNuevos) {
-                if (!carrito.contains(id.trim())) {
-                    carrito.add(id.trim());
+                if (!carritoboletos.contains(id.trim())) {
+                    carritoboletos.add(id.trim());
                 }
             }
+            session.setAttribute("carritoBoletos", carritoboletos);
+        
+            response.sendRedirect("carrito.jsp");
+            return;
         }
         
-        session.setAttribute("carritoBoletos", carrito);
-        
-        response.sendRedirect("carrito.jsp");
+        if("agregar".equals(accion)){
+            List<productoCarrito>carritoproductos =(List<productoCarrito>)session.getAttribute("carritoProductos");
+            if(carritoproductos==null){
+                carritoproductos= new ArrayList<>();
+            }
+            int idproducto=Integer.parseInt(request.getParameter("idproducto"));
+            String nombre=request.getParameter("nombre");
+            double precio=Double.parseDouble(request.getParameter("precio"));
+            String foto=request.getParameter("foto");
+            
+            boolean esiste=false;
+            for (productoCarrito articulo : carritoproductos){
+               if(articulo.getidproducto()==idproducto){
+                    articulo.setcantidad(articulo.getcantidad() + 1);
+                    esiste = true;
+                    break;
+               } 
+            }
+            if (!esiste) {
+                productoCarrito nuevoarticulo = new productoCarrito();
+                nuevoarticulo.setidproducto(idproducto);
+                nuevoarticulo.setnombre(nombre);
+                nuevoarticulo.setprecio(precio);
+                nuevoarticulo.setcantidad(1);
+                nuevoarticulo.setfoto(foto);
+                
+                carritoproductos.add(nuevoarticulo);
+            }
+            
+            session.setAttribute("carritoProductos", carritoproductos);
+            response.sendRedirect("productos.jsp");
+        }
+        if("eliminar".equals(accion)){
+            List<productoCarrito>carritoproducto=(List<productoCarrito>)session.getAttribute("carritoproductos");
+            if(carritoproducto!=null){
+                int idproducto=Integer.parseInt(request.getParameter("idproducto"));
+                carritoproducto.removeIf(articulo->articulo.getidproducto()==idproducto);
+                session.setAttribute("carritoproducto", carritoproducto);
+            }
+            response.sendRedirect("carrito.jsp");
+        }
     }
 }

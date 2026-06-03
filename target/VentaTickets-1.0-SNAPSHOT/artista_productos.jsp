@@ -125,7 +125,7 @@
         <div class="container">
             <div class="card form-section">
                 <h2>Nuevo Producto</h2>
-                <form action="artistaProductoServlet" method="POST">
+                <form action="artista_productoServlet" method="POST">
                     <input type="hidden" name="accion" value="agregar">
                     
                     <div class="form-group"><label>Nombre del Producto</label><input type="text" name="nombre" required></div>
@@ -167,7 +167,7 @@
                                 </span>
                             </td>
                             <td>
-                                <form action="artistaProductoServlet" method="POST" style="margin:0;" onsubmit="return confirm('¿Seguro que deseas eliminar este producto de la tienda?');">
+                                <form action="artista_productoServlet" method="POST" style="margin:0;" onsubmit="return confirm('¿Seguro que deseas eliminar este producto de la tienda?');">
                                     <input type="hidden" name="accion" value="eliminar">
                                     <input type="hidden" name="idProducto" value="<%= p.getid() %>">
                                     <button type="submit" class="btn-delete">Eliminar</button>
