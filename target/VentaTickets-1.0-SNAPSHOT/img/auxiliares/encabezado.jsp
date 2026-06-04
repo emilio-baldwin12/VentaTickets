@@ -96,7 +96,7 @@
     }
     
     .nav-links a:hover, 
-    .nav-links a.active { /* Esta regla ilumina la pestaña activa Y cuando se pasa el mouse */
+    .nav-links a.active {/* Esta regla ilumina la pestaña activa Y cuando se pasa el mouse */
         color: var(--accent-pink);
     }
     
@@ -135,6 +135,8 @@
             <li><a href="productos.jsp" class="<%= (uri.endsWith("productos.jsp")) ? "active" : "" %>">PRODUCTOS</a></li>
             
             <% if(nombreUser != null) { %>
+                <li><a href="miscompras.jsp" class="<%= (uri.endsWith("miscompras.jsp")) ? "active" : "" %>">MIS COMPRAS</a></li>
+                
                 <li style="display: flex; align-items: center;">
                     <a href="carrito.jsp" class="<%= (uri.endsWith("carrito.jsp")) ? "active" : "" %>" style="color: var(--accent-green); position: relative; display: flex; align-items: center; gap: 6px;">
                         <img src="img/auxiliares/carrito.png" alt="Carrito" style="width: 20px; height: auto;">
