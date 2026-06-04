@@ -178,51 +178,57 @@
             border-radius: 8px; 
             border: 2px dashed var(--entity-header); 
         }
-    </style></head>
-<body>
-    <%
-    String nombreUser = (String) session.getAttribute("nombreusuario");
-    String tipoUser = (String) session.getAttribute("tipousuario");
-    int pendientes = 0;
-%>
-    <jsp:include page="img/auxiliares/encabezado.jsp" />
-    <div class="main-wrapper">
-        <div class="section-title">MERCH</div>
-        
-        <div class="artist-grid">
-            <%
-                productosDAO dao = new productosDAO();
-                List<producto> lista = dao.obtenerTodosLosProductos();
-                for(producto p : lista) {
-            %>
-            <%
-                String fotoPath = (p.getfoto() != null && !p.getfoto().isEmpty()) 
-                            ? p.getfoto() : "default_productos.jpg";
-            %>
+    </style>
+</head>
+    <body>
+        <%
+        String nombreUser = (String) session.getAttribute("nombreusuario");
+        String tipoUser = (String) session.getAttribute("tipousuario");
+        int pendientes = 0;
+    %>
+        <jsp:include page="img/auxiliares/encabezado.jsp" />
+        <div class="main-wrapper">
+            <div class="section-title">MERCH</div>
 
-                <div class="artist-card">
-                    <div class="card-header">STOCK: <%= p.getcantidad() %> unidades</div>
+            <div class="artist-grid">
+                <%
+                    productosDAO dao = new productosDAO();
+                    List<producto> lista = dao.obtenerTodosLosProductos();
+                    for(producto p : lista) {
+                %>
+                <%
+                    String fotoPath = (p.getfoto() != null && !p.getfoto().isEmpty()) 
+                                ? p.getfoto() : "default_productos.jpg";
+                %>
 
-                    <img src="img/productos/<%= fotoPath %>" class="artist-img" alt="<%= p.getnombre() %>">
+                    <div class="artist-card">
+                        <div class="card-header">STOCK: <%= p.getcantidad() %> unidades</div>
 
-                   <div class="artist-info">
-                        <h3><%= p.getnombre() %></h3>
-                        <p style="color: #d32f2f; font-size: 18px;">$ <%= String.format("%,.2f", p.getprecio()) %></p>
-                        
-                        <form action="carritoServlet" method="POST" style="margin-top: 10px;">
-                            <input type="hidden" name="accion" value="agregar">
-                            <input type="hidden" name="idProducto" value="<%= p.getid() %>">
-                            <input type="hidden" name="nombre" value="<%= p.getnombre() %>">
-                            <input type="hidden" name="precio" value="<%= p.getprecio() %>">
-                            <input type="hidden" name="foto" value="<%= fotoPath %>">
-                            <button type="submit" style="background: none; border: none; color: var(--entity-header); font-weight: bold; cursor: pointer; padding: 0; font-size: 14px;">
-                                > AGREGAR AL CARRITO
-                            </button>
-                        </form>
+                        <a href="producto_individual.jsp?id=<%= p.getid() %>" style="display: block;">
+                            <img src="img/productos/<%= fotoPath %>" class="artist-img" alt="<%= p.getnombre() %>">
+                        </a>
+
+                        <div class="artist-info">
+                            <a href="producto_individual.jsp?id=<%= p.getid() %>" style="text-decoration: none; color: inherit;">
+                                <h3><%= p.getnombre() %></h3>
+                            </a>
+
+                            <p style="color: #d32f2f; font-size: 18px;">$ <%= String.format("%,.2f", p.getprecio()) %></p>
+
+                            <form action="carritoServlet" method="POST" style="margin-top: 10px;">
+                                <input type="hidden" name="accion" value="agregar">
+                                <input type="hidden" name="idProducto" value="<%= p.getid() %>">
+                                <input type="hidden" name="nombre" value="<%= p.getnombre() %>">
+                                <input type="hidden" name="precio" value="<%= p.getprecio() %>">
+                                <input type="hidden" name="foto" value="<%= fotoPath %>">
+                                <button type="submit" style="background: none; border: none; color: var(--entity-header); font-weight: bold; cursor: pointer; padding: 0; font-size: 14px;">
+                                    > AGREGAR AL CARRITO
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            <% } %>
+                <% } %>
+            </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>

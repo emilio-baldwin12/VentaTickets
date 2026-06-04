@@ -4,6 +4,7 @@
  */
 package controlador;
 
+import datos.productosDAO;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -48,25 +49,27 @@ public class carritoServlet extends HttpServlet {
             return;
         }
         
-        if("agregar".equals(accion)){
-            List<productoCarrito>carritoproductos =(List<productoCarrito>)session.getAttribute("carritoProductos");
-            if(carritoproductos==null){
-                carritoproductos= new ArrayList<>();
+        if("agregar".equals(accion) || "comprar_ahora".equals(accion)){
+            List<productoCarrito> carritoproductos = (List<productoCarrito>) session.getAttribute("carritoProductos");
+            if(carritoproductos == null){
+                carritoproductos = new ArrayList<>();
             }
-            int idproducto=Integer.parseInt(request.getParameter("idproducto"));
-            String nombre=request.getParameter("nombre");
-            double precio=Double.parseDouble(request.getParameter("precio"));
-            String foto=request.getParameter("foto");
             
-            boolean esiste=false;
+            int idproducto = Integer.parseInt(request.getParameter("idProducto"));
+            String nombre = request.getParameter("nombre");
+            double precio = Double.parseDouble(request.getParameter("precio"));
+            String foto = request.getParameter("foto");
+            
+            boolean existe = false;
             for (productoCarrito articulo : carritoproductos){
-               if(articulo.getidproducto()==idproducto){
+               if(articulo.getidproducto() == idproducto){
                     articulo.setcantidad(articulo.getcantidad() + 1);
-                    esiste = true;
+                    existe = true;
                     break;
                } 
             }
-            if (!esiste) {
+            
+            if (!existe) {
                 productoCarrito nuevoarticulo = new productoCarrito();
                 nuevoarticulo.setidproducto(idproducto);
                 nuevoarticulo.setnombre(nombre);
@@ -78,16 +81,57 @@ public class carritoServlet extends HttpServlet {
             }
             
             session.setAttribute("carritoProductos", carritoproductos);
-            response.sendRedirect("productos.jsp");
+            
+            if ("comprar_ahora".equals(accion)) {
+                response.sendRedirect("pago_productos.jsp");
+            } else {
+                response.sendRedirect("carrito.jsp");
+            }
         }
         if("eliminar".equals(accion)){
-            List<productoCarrito>carritoproducto=(List<productoCarrito>)session.getAttribute("carritoproductos");
+            List<productoCarrito>carritoproducto=(List<productoCarrito>)session.getAttribute("carritoProductos");
             if(carritoproducto!=null){
                 int idproducto=Integer.parseInt(request.getParameter("idproducto"));
                 carritoproducto.removeIf(articulo->articulo.getidproducto()==idproducto);
                 session.setAttribute("carritoproducto", carritoproducto);
             }
             response.sendRedirect("carrito.jsp");
+        }
+        if("finalizarCompraProductos".equals(accion)){
+            List<productoCarrito> carritoproductos = (List<productoCarrito>) session.getAttribute("carritoProductos");
+            
+            if(carritoproductos != null && !carritoproductos.isEmpty()){
+                productosDAO dao = new productosDAO();
+                boolean todoOk = true;
+                
+                for (productoCarrito articulo : carritoproductos){
+                    boolean exito = dao.descontarStock(articulo.getidproducto(), articulo.getcantidad());
+                    if(!exito){
+                        todoOk = false; 
+                    }
+                }
+                
+               if(todoOk){
+                    String totalStr = request.getParameter("total");
+                    double totalPagar = Double.parseDouble(totalStr);
+                    String nombreUser = (String) session.getAttribute("nombreusuario"); 
+                    
+                    boolean exitoVenta = dao.registrarVenta(nombreUser, totalPagar, carritoproductos);
+                    
+                    if (exitoVenta) {
+                        session.setAttribute("ultimoTotal", totalStr);
+                        session.removeAttribute("carritoProductos");//Vaciamos memoria
+                        response.sendRedirect("confirmacion_productos.jsp");
+                    } else {
+                        System.out.println("El DAO devolvió false al intentar guardar el ticket.");
+                        response.sendRedirect("pago_productos.jsp?error=bd");
+                    }
+                } else {
+                    response.sendRedirect("pago_productos.jsp?error=stock");
+                }
+            } else {
+                response.sendRedirect("productos.jsp");
+            }
         }
     }
 }
