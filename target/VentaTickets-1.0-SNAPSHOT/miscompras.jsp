@@ -116,6 +116,7 @@
                             <th>Zona</th>
                             <th>Fila / Asiento</th>
                             <th>Precio</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -131,6 +132,18 @@
                             <td><%= b.getzona() %></td>
                             <td>Fila <%= b.getfila() %> - #<%= b.getnumero() %></td>
                             <td>$<%= String.format("%,.2f", b.getprecio()) %></td>
+                            <td>
+                                <form action="boleto_individual.jsp" method="POST" style="margin: 0;">
+                                    <input type="hidden" name="evento" value="<%= b.getnombreconcierto() %>">
+                                    <input type="hidden" name="fecha" value="<%= b.getfechaconcierto() %>">
+                                    <input type="hidden" name="ciudad" value="<%= b.getciudad() %>">
+                                    <input type="hidden" name="zona" value="<%= b.getzona() %>">
+                                    <input type="hidden" name="fila" value="<%= b.getfila() %>">
+                                    <input type="hidden" name="asiento" value="<%= b.getnumero() %>">
+                                    <input type="hidden" name="precio" value="<%= b.getprecio() %>">
+                                    <button type="submit" style="background-color: #3483fa; color: white; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Ver Boleto</button>
+                                </form>
+                            </td>
                         </tr>
                         <% } %>
                     </tbody>
@@ -148,7 +161,7 @@
                 if (historialMercancia.isEmpty()) {
             %>
                 <div class="empty-cart">
-                    <p>No has realizado compras en la tienda física.</p>
+                    <p>No has realizado compras en la tienda física</p>
                 </div>
             <%
                 } else {
