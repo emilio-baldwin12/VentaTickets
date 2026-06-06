@@ -1,17 +1,50 @@
+<%@page import="java.sql.*"%>
+<%@page import="config.conexion"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     String nombreUser = (String) session.getAttribute("nombreusuario");
-
+    if (nombreUser == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
     String idConcierto = request.getParameter("idConcierto");
     String asientosSeleccionados = request.getParameter("asientosSeleccionados");
     String precioFijo = request.getParameter("precio");
     String totalPagar = request.getParameter("totalPagar");
+    int cantidadBoletos = 0;
+    String origen = request.getParameter("origen");
+    String idReventa = request.getParameter("id_reventa");
+    String nombreEventoReventa = "";
 
-    if(idConcierto == null || asientosSeleccionados == null) {
-        response.sendRedirect("index.jsp");
-        return;
+    boolean esReventa = "reventa".equals(origen) && idReventa != null;
+
+    if (esReventa) {
+        cantidadBoletos = 1; 
+        String sql = "Select r.precio_nuevo, c.nombre from ReventaBoletos r " +
+                     "join Boletos b on r.id_boleto = b.id " +
+                     "join Conciertos c on b.id_concierto = c.id " +
+                     "where r.id = ?";
+        try (Connection conn = conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, Integer.parseInt(idReventa));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    precioFijo = String.valueOf(rs.getDouble("precio_nuevo"));
+                    totalPagar = precioFijo; 
+                    nombreEventoReventa = rs.getString("nombre");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al cargar reventa en pago: " + e.getMessage());
+        }
+        
+    } else {
+        if (idConcierto == null || asientosSeleccionados == null) {
+            response.sendRedirect("index.jsp");
+            return;
+        }
+        cantidadBoletos = asientosSeleccionados.split(",").length;
     }
-    int cantidadBoletos = asientosSeleccionados.split(",").length;
 %>
 <!DOCTYPE html>
 <html>
@@ -183,36 +216,36 @@
 <body>
     <jsp:include page="img/auxiliares/encabezado.jsp" />
 
-    <form id="formFinal" action="boletoServlet" method="POST" style="display: none;">
-        <input type="hidden" name="idConcierto" value="<%= idConcierto %>">
-        <input type="hidden" name="precio" value="<%= precioFijo %>">
-        <input type="hidden" name="asientosSeleccionados" value="<%= asientosSeleccionados %>">
-        <input type="hidden" name="metodoPago" id="inputMetodo">
-    </form>
-
-        <div class="page-layout">
+    <div class="page-layout">
 
             <div class="col-resumen">
                 <h2>Resumen de Compra</h2>
+                
+                <% if (esReventa) { %>
+                    <div class="badge-reventa">Boleto Seguro</div>
+                    <div class="detalle-item" style="border-bottom: none; padding-bottom: 0;">
+                        <strong style="font-size: 18px; color: #111;"><%= nombreEventoReventa %></strong>
+                    </div>
+                <% } %>
 
                 <div class="detalle-item">
-                    <span>Asientos seleccionados:</span>
+                    <span>Asientos / Boletos:</span>
                     <strong><%= cantidadBoletos %></strong>
                 </div>
                 <div class="detalle-item">
-                    <span>Precio por boleto:</span>
+                    <span>Precio unitario:</span>
                     <span>$ <%= precioFijo %> MXN</span>
                 </div>
 
                 <div class="total-row">
-                    <span>Total:</span>
+                    <span>Total a Pagar:</span>
                     <span>$ <%= totalPagar %> MXN</span>
                 </div>
             </div>
 
             <div class="col-pago">
                 <h2>Método de Pago</h2>
-                <p style="color: #666; font-size: 14px; margin-top: -15px; margin-bottom: 25px;">Selecciona una opción para finalizar tu reserva</p>
+                <p style="color: #666; font-size: 14px; margin-top: -15px; margin-bottom: 25px;">Selecciona una opción para finalizar</p>
 
                 <button class="btn-pago" onclick="procesarPago('CREDITO')">
                     <span>Tarjeta de Crédito</span>
@@ -229,13 +262,18 @@
                     <img src="${pageContext.request.contextPath}/img/auxiliares/oxxo.jpg" class="icono-pago">
                 </button>
             </div>
-
         </div>
         <form id="formFinalizarPago" action="transaccion.jsp" method="POST" style="display: none;">
             <input type="hidden" name="metodoPago" id="inputMetodoPago">
-            <input type="hidden" name="idConcierto" value="<%= request.getParameter("idConcierto") %>">
-            <input type="hidden" name="asientosSeleccionados" value="<%= request.getParameter("asientosSeleccionados") %>">
-            <input type="hidden" name="totalPagar" value="<%= request.getParameter("totalPagar") %>">
+            <input type="hidden" name="totalPagar" value="<%= totalPagar %>">
+            
+            <% if (esReventa) { %>
+                <input type="hidden" name="origen" value="reventa">
+                <input type="hidden" name="id_reventa" value="<%= idReventa %>">
+            <% } else { %>
+                <input type="hidden" name="idConcierto" value="<%= idConcierto %>">
+                <input type="hidden" name="asientosSeleccionados" value="<%= asientosSeleccionados %>">
+            <% } %>
         </form>
 
         <script>

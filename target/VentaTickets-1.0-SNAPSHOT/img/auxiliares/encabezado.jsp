@@ -109,7 +109,6 @@
         margin-left: 5px;
     }
 </style>
-
 <header class="main-header">
     <div class="header-top">
         <a href="index.jsp" class="logo">
@@ -139,25 +138,35 @@
     </div>
     <nav class="main-nav">
         <ul class="nav-links">
-            <li><a href="index.jsp" class="<%= (uri.endsWith("index.jsp")) ? "active" : "" %>">INICIO</a></li>
+            <li>
+                <a href="index.jsp" class="<%= (uri.endsWith("index.jsp")) ? "active" : "" %>">INICIO</a></li>
             
-            <li><a href="conciertos.jsp" class="<%= (uri.endsWith("conciertos.jsp") || uri.endsWith("concierto_asientos.jsp")) ? "active" : "" %>">
+            <li>
+                <a href="conciertos.jsp" class="<%= (uri.endsWith("conciertos.jsp") || uri.endsWith("concierto_asientos.jsp")) ? "active" : "" %>">
                     CONCIERTOS
                 </a>
             </li>
             
-            <li><a href="artista.jsp" class="<%= (uri.endsWith("artista.jsp")) ? "active" : "" %>">
+            <li>
+                <a href="artista.jsp" class="<%= (uri.endsWith("artista.jsp")) ? "active" : "" %>">
                     ARTISTAS
                 </a>
             </li>
-            <li><a href="productos.jsp" class="<%= (uri.endsWith("productos.jsp")) ? "active" : "" %>">
+            <li>
+                <a href="productos.jsp" class="<%= (uri.endsWith("productos.jsp")) ? "active" : "" %>">
                     PRODUCTOS
                 </a>
             </li>
             
             <% if(nombreUser != null) { %>
-                <li><a href="miscompras.jsp" class="<%= (uri.endsWith("miscompras.jsp")) ? "active" : "" %>">
+                <li>
+                    <a href="miscompras.jsp" class="<%= (uri.endsWith("miscompras.jsp")) ? "active" : "" %>">
                         MIS COMPRAS
+                    </a>
+                </li>
+                <li>
+                    <a href="reventas.jsp" class="<%= (uri.endsWith("reventas.jsp") || uri.endsWith("formulario_reventa.jsp")) ? "active" : "" %>">
+                        REVENTAS
                     </a>
                 </li>
                 

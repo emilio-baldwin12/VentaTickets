@@ -9,6 +9,7 @@ import java.sql.Date;
  * @author luise
  */
 public class carrito {
+    private int id;
     private int idasiento;
     private String zona;
     private String fila;
@@ -20,6 +21,14 @@ public class carrito {
     private Date fechaconcierto; 
 
     public carrito() {
+    }
+
+    public int getid() {
+        return id;
+    }
+
+    public void setid(int id) {
+        this.id = id;
     }
 
     public int getidasiento() {

@@ -92,6 +92,11 @@
         <jsp:include page="img/auxiliares/encabezado.jsp" />
 
         <div class="container">
+            <% if ("reventa_publicada".equals(request.getParameter("exito"))) { %>
+                <div class="alert-success">
+                    ¡Tu boleto se ha publicado en el mercado de Reventas con éxito!
+                </div>
+            <% } %>
             
             <h1>Mis Boletos de Conciertos</h1>
             <%
@@ -134,6 +139,8 @@
                             <td>$<%= String.format("%,.2f", b.getprecio()) %></td>
                             <td>
                                 <form action="boleto_individual.jsp" method="POST" style="margin: 0;">
+                                    <input type="hidden" name="id_boleto" value="<%= b.getid() %>">
+                                    
                                     <input type="hidden" name="evento" value="<%= b.getnombreconcierto() %>">
                                     <input type="hidden" name="fecha" value="<%= b.getfechaconcierto() %>">
                                     <input type="hidden" name="ciudad" value="<%= b.getciudad() %>">
@@ -141,7 +148,9 @@
                                     <input type="hidden" name="fila" value="<%= b.getfila() %>">
                                     <input type="hidden" name="asiento" value="<%= b.getnumero() %>">
                                     <input type="hidden" name="precio" value="<%= b.getprecio() %>">
-                                    <button type="submit" style="background-color: #3483fa; color: white; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Ver Boleto</button>
+                                    <button type="submit" style="background-color: #3483fa; color: white; padding: 8px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                                        Ver Boleto
+                                    </button>
                                 </form>
                             </td>
                         </tr>

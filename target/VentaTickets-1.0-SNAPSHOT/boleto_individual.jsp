@@ -12,9 +12,10 @@
     String fila = request.getParameter("fila");
     String asiento = request.getParameter("asiento");
     String precio = request.getParameter("precio");
+    String idBoleto = request.getParameter("id_boleto");
 
     if(evento == null) {
-        response.sendRedirect("mis_compras.jsp");
+        response.sendRedirect("miscompras.jsp");
         return;
     }
     
@@ -155,15 +156,22 @@
                 </div>
                 
                 <div class="info-grid" style="grid-template-columns: 1fr 2fr;">
-                    <div class="info-group" style="text-align: left;">
+                    <div class="info-group">
                         <span class="info-label">Precio</span>
-                        <span class="info-value">MX <%= String.format("%,.2f", Double.parseDouble(precio)) %></span>
+                        <span class="info-value">MX $<%= precio %></span>
                     </div>
-                    <div class="info-group" style="text-align: left;">
+                    <div class="info-group">
                         <span class="info-label">Lugar</span>
                         <span class="info-value"><%= ciudad %></span>
                     </div>
                 </div>
+                    
+                <div class="ticket-actions" style="margin-top: 35px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 25px;">
+                    <a href="reventa_formulario.jsp?id_bol=<%= idBoleto %>&precio_orig=<%= precio %>" class="btn-reventa">
+                        Poner en Reventa Seguro
+                    </a>
+                </div>
+
             </div>
             
             <div class="ticket-right">

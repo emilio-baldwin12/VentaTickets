@@ -6,15 +6,17 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
-    String idConcierto = request.getParameter("idConcierto");
-    String asientos = request.getParameter("asientosSeleccionados");
-    String total = request.getParameter("totalPagar");
-    String metodo = request.getParameter("metodoPago");
     if (session.getAttribute("nombreusuario") == null) {
         response.sendRedirect("login.jsp");
         return; 
     }
-
+    String total = request.getParameter("totalPagar");
+    String metodo = request.getParameter("metodoPago");
+    String idConcierto = request.getParameter("idConcierto");
+    String asientos = request.getParameter("asientosSeleccionados");
+    String origen = request.getParameter("origen");
+    String idReventa = request.getParameter("id_reventa");
+    boolean esReventa ="reventa".equals(origen);
 %>
 <!DOCTYPE html>
 <html>
@@ -81,57 +83,72 @@
             }
         </style>
     </head>
-    <body>
+        <body>
 
-        <div class="card-container">
-            <h2 style="margin-top: 0; color: #1A1A1A;">Finalizar Pago</h2>
-            
-            <div class="order-summary">
-                <span style="font-size: 13px; color: #666; font-weight: bold;">TOTAL A CARGAR:</span>
-                <h2 style="margin: 5px 0 0 0; color: #1A1A1A;">$ <%= total %> MXN</h2>
-                <small style="color: #888;">Método: Tarjeta de <%= metodo %></small>
+            <div class="card-container">
+                <h2 style="margin-top: 0; color: #1A1A1A;">Finalizar Pago</h2>
+
+                <div class="order-summary">
+                    <% if(esReventa) { %>
+                        <div class="badge-reventa">Compra Segura</div>
+                    <% } %>
+                    <br>
+                    <span style="font-size: 13px; color: #666; font-weight: bold;">TOTAL A CARGAR:</span>
+                    <h2 style="margin: 5px 0 0 0; color: #1A1A1A;">$ <%= total %> MXN</h2>
+                    <small style="color: #888;">Método: <%= "OXXO".equals(metodo) ? "Efectivo OXXO" : "Tarjeta de " + metodo %></small>
+                </div>
+
+                <% if(esReventa) { %>
+                    <form action="reventaServlet" method="POST">
+                        <input type="hidden" name="accion" value="finalizar_compra_reventa">
+                        <input type="hidden" name="id_reventa" value="<%= idReventa %>">
+                <% } else { %>
+                    <form action="boletoServlet" method="POST">
+                        <input type="hidden" name="accion" value="finalizarCompra">
+                        <input type="hidden" name="idConcierto" value="<%= idConcierto %>">
+                        <input type="hidden" name="asientos" value="<%= asientos %>">
+                <% } %>
+
+                        <input type="hidden" name="total" value="<%= total %>">
+                        <input type="hidden" name="metodoPago" value="<%= metodo %>">
+
+                        <div class="form-group">
+                            <label>Titular de la Tarjeta</label>
+                            <input type="text" required placeholder="Nombre como aparece en la tarjeta">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Número de Tarjeta</label>
+                            <input type="text" id="numeroTarjeta" required placeholder="0000 0000 0000 0000" maxlength="19">
+                        </div>
+
+                        <div style="display: flex; gap: 20px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Vencimiento</label>
+                                <input type="text" id="fechaVencimiento" required placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>CVV</label>
+                                <input type="password" required placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-pagar">PAGAR AHORA</button>
+                    </form>
             </div>
 
-            <form action="boletoServlet" method="POST">
-                <input type="hidden" name="accion" value="finalizarCompra">
-                <input type="hidden" name="idConcierto" value="<%= idConcierto %>">
-                <input type="hidden" name="asientos" value="<%= asientos %>">
-                <input type="hidden" name="total" value="<%= total %>">
-                <input type="hidden" name="metodoPago" value="<%= metodo %>">
+        </body>
+        <script>
+            document.getElementById('fechaVencimiento').addEventListener('input', function (e) {
+                    let valor = e.target.value.replace(/\D/g, '');
+                    if (valor.length > 2) {
+                        valor = valor.slice(0, 2) + '/' + valor.slice(2, 4);
+                    }
+                    e.target.value = valor;
+                });
 
-                <div class="form-group">
-                    <label>Titular de la Tarjeta</label>
-                    <input type="text" required placeholder="Nombre como aparece en la tarjeta">
-                </div>
-
-                <div class="form-group">
-                    <label>Número de Tarjeta</label>
-                    <input type="text" id="numeroTarjeta" required placeholder="0000 0000 0000 0000" maxlength="19">
-                </div>
-
-                <div style="display: flex; gap: 20px;">
-                    <div class="form-group" style="flex: 1;">
-                        <label>Vencimiento</label>
-                        <input type="text" id="fechaVencimiento" required placeholder="MM/YY" maxlength="5">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>CVV</label>
-                        <input type="password" required placeholder="123" maxlength="3">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-pagar">PAGAR AHORA</button>
-            </form>
-        </div>
-
-    </body>
-    <script>
-        document.getElementById('fechaVencimiento').addEventListener('input', function (e) {
-                let valor = e.target.value.replace(/\D/g, '');
-                if (valor.length > 2) {
-                    valor = valor.slice(0, 2) + '/' + valor.slice(2, 4);
-                }
-                e.target.value = valor;
+            document.getElementById('numeroTarjeta').addEventListener('input', function (e) {
+                e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
             });
-    </script>
+        </script>
 </html>
