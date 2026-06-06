@@ -9,12 +9,15 @@ com\mycompany\ventatickets\resources\JakartaEE8Resource.class
 datos\usuarioDAO.class
 controlador\asientoServlet.class
 modelo\detalleVenta.class
+controlador\solicitudServlet.class
 datos\conciertoDAO.class
 modelo\producto.class
 com\mycompany\ventatickets\JakartaRestConfiguration.class
 controlador\artista_productoServlet.class
 modelo\recinto.class
+controlador\conciertoServlet.class
 modelo\carrito.class
+modelo\solicitudConcierto.class
 controlador\filaServlet.class
 modelo\artista.class
 datos\filaDAO.class

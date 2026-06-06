@@ -15,9 +15,8 @@ public class notificacionDAO {
     public List<notificacion> obtenerNotis(int idusuario, String tipousuario) {
         List<notificacion> lista = new ArrayList<>();
         
-        String sql = "SELECT * FROM notificaciones WHERE id_usuario_destino = ? ORDER BY fecha DESC";
-        String sqlAdmin = "SELECT id_usuario, rol, motivo, fecha FROM solicitudes WHERE estado = 'PENDIENTE'";
-
+        String sql = "select * from notificaciones where id_usuario_destino = ? oder by fecha desc";
+        String sqlAdmin = "Select id_usuario, rol, motivo, Cuerrent_timestamp as fecha from solicitudes where estado = 'PENDIENTE'";
         try (Connection conn = conexion.getConnection(); 
          PreparedStatement ps = conn.prepareStatement(sql)) {
         
@@ -40,7 +39,7 @@ public class notificacionDAO {
                         n.settitulo("SOLICITUD DE ROL: " + rsAdmin.getString("rol"));
                         n.setmensaje("El usuario ID " + rsAdmin.getInt("id_usuario") + " solicita cambio. Motivo: " + rsAdmin.getString("motivo"));
                         n.setfecha(rsAdmin.getTimestamp("fecha"));
-                        n.settipo("PERMISO"); // Categoría especial para filtrar
+                        n.settipo("PERMISO"); 
                         lista.add(n);
                     }
                 }

@@ -112,14 +112,26 @@
 
 <header class="main-header">
     <div class="header-top">
-        <a href="index.jsp" class="logo">TICKETS</a>
+        <a href="index.jsp" class="logo">
+            TICKETS
+        </a>
         <div class="user-actions">
-            <a href="#" class="action-item search-btn">BUSCAR ARTISTA O EVENTO</a>
-            <a href="notificaciones.jsp" class="action-item">NOTIFICACIONES</a>
-            <a href="#" class="action-item">PERFIL <%= (nombreUser != null) ? "" : "" %></a>
-            <a href="configuracion.jsp" class="action-item">CONFIGURACIÓN</a>
+            <a href="#" class="action-item search-btn">
+                BUSCAR ARTISTA O EVENTO
+            </a>
+            <a href="notificaciones.jsp" class="action-item">
+                NOTIFICACIONES
+            </a>
+            <a href="#" class="action-item">
+                PERFIL 
+                <%= (nombreUser != null) ? "" : "" %></a>
+            <a href="configuracion.jsp" class="action-item">
+                CONFIGURACIÓN
+            </a>
             <% if(nombreUser == null) { %>
-                <a href="login.jsp" class="action-item" style="color: var(--accent-green)">INGRESA</a>
+                <a href="login.jsp" class="action-item" style="color: var(--accent-green)">
+                    INGRESA
+                </a>
             <% } else { %>
                 <span class="action-item" style="color: var(--accent-pink)"><%= nombreUser.toUpperCase() %></span>
             <% } %>
@@ -129,13 +141,25 @@
         <ul class="nav-links">
             <li><a href="index.jsp" class="<%= (uri.endsWith("index.jsp")) ? "active" : "" %>">INICIO</a></li>
             
-            <li><a href="conciertos.jsp" class="<%= (uri.endsWith("conciertos.jsp") || uri.endsWith("concierto_asientos.jsp")) ? "active" : "" %>">CONCIERTOS</a></li>
+            <li><a href="conciertos.jsp" class="<%= (uri.endsWith("conciertos.jsp") || uri.endsWith("concierto_asientos.jsp")) ? "active" : "" %>">
+                    CONCIERTOS
+                </a>
+            </li>
             
-            <li><a href="artista.jsp" class="<%= (uri.endsWith("artista.jsp")) ? "active" : "" %>">ARTISTAS</a></li>
-            <li><a href="productos.jsp" class="<%= (uri.endsWith("productos.jsp")) ? "active" : "" %>">PRODUCTOS</a></li>
+            <li><a href="artista.jsp" class="<%= (uri.endsWith("artista.jsp")) ? "active" : "" %>">
+                    ARTISTAS
+                </a>
+            </li>
+            <li><a href="productos.jsp" class="<%= (uri.endsWith("productos.jsp")) ? "active" : "" %>">
+                    PRODUCTOS
+                </a>
+            </li>
             
             <% if(nombreUser != null) { %>
-                <li><a href="miscompras.jsp" class="<%= (uri.endsWith("miscompras.jsp")) ? "active" : "" %>">MIS COMPRAS</a></li>
+                <li><a href="miscompras.jsp" class="<%= (uri.endsWith("miscompras.jsp")) ? "active" : "" %>">
+                        MIS COMPRAS
+                    </a>
+                </li>
                 
                 <li style="display: flex; align-items: center;">
                     <a href="carrito.jsp" class="<%= (uri.endsWith("carrito.jsp")) ? "active" : "" %>" style="color: var(--accent-green); position: relative; display: flex; align-items: center; gap: 6px;">
@@ -156,6 +180,11 @@
             
             <% if(rolUser != null && rolUser.equals("ARTISTA")) { %>
                 <li style="display: flex; align-items: center; margin-left: auto;">
+                    <a href="solicitar_concierto.jsp" class="<%= (uri.endsWith("solicitar_concierto.jsp")) ? "active" : "" %>" style="display: flex; align-items: center; gap: 6px; color: var(--accent-pink);">
+                        NUEVO CONCIERTO
+                    </a>
+                </li>
+                <li style="display: flex; align-items: center;">
                     <a href="artista_productos.jsp" class="<%= (uri.endsWith("artista_productos.jsp")) ? "active" : "" %>" style="display: flex; align-items: center; gap: 6px; color: var(--accent-green);">
                         MIS PRODUCTOS 
                         <img src="img/auxiliares/lapiz.png" alt="Editar" style="width: 14px; height: auto;">
