@@ -134,5 +134,8 @@
                 }
                 e.target.value = valor;
             });
+            document.getElementById('numeroTarjeta').addEventListener('input', function (e) {
+                e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+            });
     </script>
 </html>

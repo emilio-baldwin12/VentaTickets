@@ -19,35 +19,27 @@ import datos.filaDAO;
 @WebServlet(name = "filaServlet", urlPatterns = {"/filaServlet"})
 public class filaServlet extends HttpServlet {
 
-
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        HttpSession sesion=request.getSession();
-        if(sesion.getAttribute("idUsuario")==null){
-            response.sendRedirect("login.jsp?error=sesion");
-            return;
-        }
-        
-        int eventoId=Integer.parseInt(request.getParameter("idEvento"));
-        int usuarioId=(int)sesion.getAttribute("idUsuario");
-        
-        filaDAO dao=new filaDAO();
-        dao.entrarFila(eventoId,usuarioId);
-        
-        response.sendRedirect("espera.jsp?idEvento=" + eventoId);
-    }
-
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
-    }
+        
+        HttpSession session = request.getSession();
+        if (session.getAttribute("idusuario") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+        int idUsuario = (int) session.getAttribute("idusuario");
+        int idConcierto = Integer.parseInt(request.getParameter("idConcierto"));
+        
+        filaDAO dao = new filaDAO();
+        
+        dao.unirseFila(idConcierto, idUsuario);//El usuario toca el botón de comprar y se une a la fila de Redis
+        
+        if (dao.puedeComprar(idConcierto, idUsuario)) {
+            response.sendRedirect("concierto_asientos.jsp?id=" + idConcierto);
+        } else {
+            response.sendRedirect("salaEspera.jsp?idConcierto=" + idConcierto);
+        }
     }
 }
