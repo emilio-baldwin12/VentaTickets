@@ -5,6 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<link href="https://fonts.cdnfonts.com/css/open-dyslexic" rel="stylesheet">
+
 <%
     String nombreUser = (String) session.getAttribute("nombreusuario");
     String rolUser = (String) session.getAttribute("tipousuario");
@@ -12,13 +14,53 @@
 
 %>
 <style>
-    :root {
-        --bg-blue: #8EACB8;
-        --entity-header: #1A1A1A;
-        --entity-body: #E8E2D1;
-        --accent-pink: #FFB6C1;
+    /* Tema 1: You seem pretty sad for a girl so in lovee */
+    :root, body.tema-sadgirl {
+        --bg-blue: #8EACB8;         
+        --entity-header: #1A1A1A;   
+        --entity-body: #E8E2D1;     
+        --accent-pink: #FFB6C1;     
         --accent-green: #90EE90;
     }
+
+    /* Tema 2: The Life of a Showgirl */
+    body.tema-showgirl {
+        --bg-blue: #7AB99A;         
+        --entity-header: #E8643E;   
+        --entity-body: #DABE8C;     
+        --accent-pink: #72B393;     
+        --accent-green: #e89A53;    
+    }
+    
+    /* Tema 3: Debí tirar más fotos */
+    body.tema-fotos {
+        --bg-blue: #08391F;         
+        --entity-header: #5C4B43;   
+        --entity-body: #E7F0E8;     
+        --accent-pink: #88B70D;     
+        --accent-green: #80564C;    
+    }
+    /*DISLEXIA*/
+    @font-face {
+        font-family: 'MiOpenDyslexic';
+        src: url('${pageContext.request.contextPath}/fuentes/OpenDyslexicMono-Regular.otf') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'MiOpenDyslexic';
+        src: url('${pageContext.request.contextPath}/fuentes/OpenDyslexicMono-Regular.otf') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    body.fuente-dislexia, body.fuente-dislexia * {
+        font-family: 'MiOpenDyslexic', 'Comic Sans MS', sans-serif !important;
+        letter-spacing: 0.1px !important;
+        line-height: 1.3 !important;
+    }
+    
     .main-header {
         background-color: var(--entity-header);
         color: white;
@@ -202,4 +244,21 @@
             <% } %>
         </ul>
     </nav>
+        <script>
+            (function() {
+                const temaActual = localStorage.getItem('preferencia-tema') || 'tema-sadgirl';
+                const fuenteActual = localStorage.getItem('preferencia-fuente');
+
+                if (document.body) {
+                    document.body.classList.remove('tema-sadgirl', 'tema-showgirl', 'tema-fotos');
+                    document.body.classList.add(temaActual);
+
+                    if (fuenteActual === 'activa') {
+                        document.body.classList.add('fuente-dislexia');
+                    } else {
+                        document.body.classList.remove('fuente-dislexia');
+                    }
+                }
+            })();
+        </script>
 </header>

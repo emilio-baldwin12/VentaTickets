@@ -53,10 +53,14 @@
                 color: var(--accent-green);
                 margin-bottom: 10px;
             }
-            h1 { color: var(--entity-header); margin-bottom: 5px; }
-            p { color: #666; margin-bottom: 30px; }
-
-            /* Estilo del Ticket */
+            h1 { 
+                color: var(--entity-header); 
+                margin-bottom: 5px; 
+            }
+            p { 
+                color: #666; 
+                margin-bottom: 30px; 
+            }
             .ticket {
                 display: flex;
                 background: #fff;
@@ -72,8 +76,16 @@
                 flex: 2;
                 border-right: 2px dashed #ddd;
             }
-            .ticket-info h3 { margin: 0 0 10px 0; font-size: 18px; text-transform: uppercase; }
-            .ticket-info p { margin: 5px 0; font-size: 14px; color: #444; }
+            .ticket-info h3 { 
+                margin: 0 0 10px 0; 
+                font-size: 18px; 
+                text-transform: uppercase; 
+            }
+            .ticket-info p { 
+                margin: 5px 0; 
+                font-size: 14px; 
+                color: #444; 
+            }
             
             .ticket-qr {
                 flex: 1;
@@ -108,7 +120,9 @@
                 font-weight: bold;
                 transition: background 0.3s;
             }
-            .btn-home:hover { background: #333; }
+            .btn-home:hover {
+                background: #333;
+            }
         </style>
     </head>
     <body>

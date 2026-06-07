@@ -27,17 +27,63 @@
             font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0; 
         }
-        .container { max-width: 1000px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { color: #1A1A1A; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f8f9fa; color: #333; text-transform: uppercase; font-size: 13px; }
-        .btn { padding: 8px 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; font-size: 12px; }
-        .btn-accept { background-color: #28a745; }
-        .btn-accept:hover { background-color: #218838; }
-        .btn-reject { background-color: #dc3545; }
-        .btn-reject:hover { background-color: #c82333; }
-        .empty-msg { text-align: center; padding: 40px; color: #666; font-size: 16px; }
+        .container { 
+            max-width: 1000px; 
+            margin: 40px auto;
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #1A1A1A;
+            margin-top: 0;
+            border-bottom: 2px solid #eee; 
+            padding-bottom: 10px;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse;
+            margin-top: 20px; 
+        }
+        th, td {
+            padding: 15px;
+            text-align: left; 
+            border-bottom: 1px solid #ddd;
+        }
+        th { 
+            background-color: #f8f9fa;
+            color: #333;
+            text-transform: uppercase;
+            font-size: 13px; 
+        }
+        .btn { 
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px; 
+            font-weight: bold;
+            cursor: pointer; 
+            color: white;
+            font-size: 12px;
+        }
+        .btn-accept {
+            background-color: #28a745;
+        }
+        .btn-accept:hover {
+            background-color: #218838;
+        }
+        .btn-reject {
+            background-color: #dc3545;
+        }
+        .btn-reject:hover { 
+            background-color: #c82333;
+        }
+        .empty-msg { 
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 16px; 
+        }
     </style>
 </head>
 <body>

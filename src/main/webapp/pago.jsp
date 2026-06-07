@@ -164,7 +164,12 @@
             flex-direction: column;
             justify-content: center;
         }
-        h2 { color: var(--entity-header); margin-top: 0; margin-bottom: 25px; text-transform: uppercase;}
+        h2 { 
+            color: var(--entity-header); 
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
         
         .detalle-item {
             display: flex;
