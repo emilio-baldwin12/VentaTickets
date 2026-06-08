@@ -150,10 +150,10 @@ public class artistaDAO {
    
    public List<concierto> obtenerGiraArtista(int idArtista){
        List<concierto>lista=new ArrayList<>();
-       String sql= "SELECT c.* FROM Conciertos c " +
-                   "JOIN Conciero_Artista ca ON c.id = ca.id_concierto " +
-                   "WHERE ca.id_artista = ? " +
-                   "ORDER BY c.fecha ASC";
+       String sql= "Select c.* from Conciertos c " +
+                   "join Conciero_Artista ca on c.id = ca.id_concierto " +
+                   "where ca.id_artista = ? " +
+                   "order by c.fecha ASC";
        try(Connection conn =config.conexion.getConnection();
            PreparedStatement ps=conn.prepareStatement(sql)){
            ps.setInt(1,idArtista);
@@ -177,8 +177,8 @@ public class artistaDAO {
    
    public List<concierto> obtenerConciertosArtistas(int idArtista){
        List <concierto> lista =new ArrayList<>();
-       String sql ="SELECT c.* FROM Conciertos c " +
-                   "JOIN Concierto_Artista ca ON c.id = ca.id_concierto " +
+       String sql ="Select c.* From Conciertos c " +
+                   "Join Concierto_Artista ca on c.id = ca.id_concierto " +
                    "Where ca.id_artista = ? " +
                    "Order by c.fecha asc";
        
@@ -214,4 +214,29 @@ public class artistaDAO {
            return false;
        }
    }
+   
+   public List<artista> listarTop4Tendencia() {
+        List<artista> lista = new ArrayList<>();
+        String sql = "Select u.id, u.nombre, a.genero, a.foto " +
+                     "from Usuarios u " +
+                     "join Artistas a on u.id = a.id_usuario " +
+                     "order by u.id asc Limit 4"; 
+        
+        try (Connection conn = config.conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+             
+            while (rs.next()) {
+                artista a = new artista();
+                a.setID(rs.getInt("id")); 
+                a.setnombre(rs.getString("nombre"));
+                a.setgenero(rs.getString("genero")); 
+                a.setfoto(rs.getString("foto")); 
+                lista.add(a);
+            }
+        } catch (Exception e) {
+            System.out.println("Error al listar artistas en tendencia: " + e.getMessage());
+        }
+        return lista;
+    }
 }

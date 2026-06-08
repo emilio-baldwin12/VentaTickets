@@ -125,4 +125,29 @@ public class conciertoDAO {
             return false;
         }
     }
+    
+    public List<concierto> listarTop4ToursCercanos() {
+        List<concierto> lista = new ArrayList<>();
+        String sql = "Select nombre, max(fotos) as fotos, min(fecha) as fecha_proxima " +
+                     "from Conciertos " +
+                     "where fecha >= current_date and nombre != 'The Unraveled Tour' " +
+                     "group by nombre " +
+                     "order by fecha_proxima asc " +
+                     "limit 4";
+        
+        try (Connection conn = config.conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+             
+            while (rs.next()) {
+                concierto c = new concierto();
+                c.setnombre(rs.getString("nombre"));
+                c.setfotos(rs.getString("fotos"));
+                lista.add(c);
+            }
+        } catch (Exception e) {
+            System.out.println("Error al listar top 4 de conciertos: " + e.getMessage());
+        }
+        return lista;
+    }
 }

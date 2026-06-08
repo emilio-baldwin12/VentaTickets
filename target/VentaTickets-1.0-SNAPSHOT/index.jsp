@@ -1,5 +1,21 @@
+<%@page import="modelo.artista"%>
+<%@page import="datos.artistaDAO"%>
+<%@page import="modelo.concierto"%>
+<%@page import="java.util.List"%>
+<%@page import="datos.conciertoDAO"%>
 <%@page import="datos.solicitudDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    String tipoUser = (String) session.getAttribute("tipo_usuario");
+    String nombreUser = (String) session.getAttribute("nombreUsuario");
+    int pendientes = 0;
+
+    if("ADMIN".equals(tipoUser)) {
+        pendientes = new solicitudDAO().contarPendientes();
+    }
+    
+    conciertoDAO dao = new conciertoDAO();
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,11 +23,11 @@
     <title>Tickets | Home</title>
     <style>
         :root {
-            --bg-blue: #8EACB8;  /* Azul OR */
-            --entity-header: #1A1A1A; /* Negro */
-            --entity-body: #E8E2D1;   /* Crema */
-            --accent-pink: #FFB6C1;   /* Rosa */
-            --accent-green: #90EE90;  /* Verde */
+            --bg-blue: #8EACB8;  
+            --entity-header: #1A1A1A; 
+            --entity-body: #E8E2D1;   
+            --accent-pink: #FFB6C1;   
+            --accent-green: #90EE90;  
         }
 
         body { 
@@ -19,241 +35,223 @@
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             margin: 0; 
             color: #333;
+            overflow-x: hidden; /*Evita que la pantalla se mueva hacia los lados*/
         }
 
-        .main-header {
-            background-color: var(--entity-header);
-            color: white;
-            padding: 0 40px;
+        .hero-banner-full {
+            position: relative;
+            width: 100%;
+            height: 450px;
             display: flex;
-            flex-direction: column; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            align-items: flex-end;
+            padding: 40px 10%;
+            box-sizing: border-box;
+            background: url('img/index/unraveled_banner.jpg') center/cover no-repeat;
+            margin-bottom: 50px;
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 70px;
-        }
-
-        .logo { 
-            font-size: 30px; 
-            font-weight: bold; 
-            color: white; 
-            text-decoration: none; 
-            letter-spacing: 2px;
-        }
-
-        .user-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .action-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: white;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: bold;
-            transition: 0.3s;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        .action-item:hover { color: var(--accent-pink); }
-
-        .search-trigger {
-            background: #2A2A2A;
-            padding: 8px 15px;
-            border-radius: 4px;
-            border: 1px solid #444;
-            color: #888;
-            font-size: 12px;
-        }
-
-        .main-nav {
-            border-top: 1px solid #333;
-            display: flex;
-            justify-content: flex-start;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            list-style: none;
-            margin: 0;
-            padding: 12px 0;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
+        .hero-content p {
             font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-
-        .nav-links a:hover { color: var(--accent-pink); }
-
-        .badge {
-            background-color: #ff4444;
             color: white;
-            border-radius: 50%;
-            padding: 2px 7px;
-            font-size: 10px;
-            margin-left: 5px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .main-wrapper {
-            display: flex;
+        .btn-hero {
+            background-color: #0056b3; 
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-hero:hover {
+            background-color: #004494;
+            transform: scale(1.05); 
+        }
+
+        .main-container {
             max-width: 1200px;
-            margin: 30px auto;
-            gap: 25px;
+            margin: 0 auto 50px auto;
             padding: 0 20px;
         }
 
-        .content-main { flex: 3; }
-        .sidebar { flex: 1; }
-
         .section-title { 
-            font-size: 18px; 
-            font-weight: bold;
+            font-size: 16px; 
+            font-weight: 800;
             margin-bottom: 20px; 
-            color: white;
-            background: var(--entity-header);
-            padding: 8px 15px; 
-            display: inline-block; 
-            border-radius: 4px;
+            color: #111;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #333;
+            display: inline-block;
+            padding-bottom: 5px;
         }
         
-        .event-grid {
+        .tour-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
         }
 
-        .event-card {
-            background: var(--entity-body);
-            border: 2px solid var(--entity-header);
-            border-radius: 8px; 
-            overflow: hidden; 
-            transition: 0.3s;
+        .tour-card {
             display: flex;
             flex-direction: column;
+            text-decoration: none;
+            transition: 0.2s;
         }
 
-        .event-card:hover { 
-            transform: scale(1.02); 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        .tour-card:hover 
+        
+        .tour-img { 
+            opacity: 0.9;
         }
-        .event-header { 
-            background: var(--entity-header); 
-            color: white; 
-            padding: 10px; 
-            text-align: center; 
-            font-size: 13px; 
-            font-weight: bold;
+
+        .tour-img {
+            height: 280px; 
+            background-color: #e0e0e0;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
         }
-        .event-info { 
-            padding: 15px; 
-            border-top: 1px solid #ccc; 
+
+        .tour-info h3 { 
+            font-size: 18px;
+            margin: 0 0 4px 0;
+            color: #111;
         }
-        .event-info h3 { 
+        .tour-info p { 
+            font-size: 13px;
+            color: #666; 
+            margin: 0; 
+            text-transform: uppercase; 
+        }
+
+        .trend-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .trend-card {
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+        }
+
+        .trend-card:hover .trend-img {
+            transform: scale(1.02);
+        }
+
+        .trend-img {
+            height: 150px;
+            background-color: #d0d0d0;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .trend-genre { 
+            font-size: 11px; 
+            color: #666; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 12px 0 2px 0;
+        
+        }
+        .trend-name { 
             font-size: 16px; 
-            margin: 0 0 8px 0; 
-            color: #111; 
-        }
-        .event-info p { 
-            font-size: 13px; 
-            color: #444; 
-            margin: 2px 0; 
+            font-weight: bold;
+            color: #000; 
+            margin: 0; 
         }
 
-        .side-card {
-            background: var(--entity-body);
-            border: 2px solid var(--entity-header);
-            padding: 20px;
-            border-radius: 8px; 
-            margin-bottom: 20px;
-        }
-        .side-card h4 { 
-            margin-top: 0; 
-            border-bottom: 2px solid var(--entity-header); 
-            padding-bottom: 5px; 
+        @media (max-width: 900px) {
+            .tour-grid { 
+                grid-template-columns: 1fr; 
+            }
+            
+            .trend-grid { 
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hero-banner-full { 
+                padding: 40px 5%;
+                height: 350px;
+            }
         }
     </style>
 </head>
-    <body>
+<body>
 
-        <%
-            String tipoUser = (String) session.getAttribute("tipo_usuario");
-            String nombreUser = (String) session.getAttribute("nombreUsuario");
-            int pendientes = 0;
+    <jsp:include page="img/auxiliares/encabezado.jsp" />
 
-            if("ADMIN".equals(tipoUser)) {
-                pendientes = new solicitudDAO().contarPendientes();
-            }
-        %>
+    <div class="hero-banner-full">
+        <div class="hero-content">
+            <p> Olivia Rodrigo</p>
+            <a href="filaServlet?idConcierto=1" class="btn-hero">Ver boletos</a>
+        </div>
+    </div>
 
-        <jsp:include page="img/auxiliares/encabezado.jsp" />
-            <div class="main-wrapper">
-                <div class="content-main">
-                    <div class="section-title">LO MÁS BUSCADO</div>
-
-                    <div class="event-grid">
-                        <div class="event-card">
-                            <div class="event-header">ARTISTA : ID_01</div>
-                            <div class="event-info">
-                                <h3>Vans Warped Tour</h3>
-                                <p>> Autodromo Hnos. Rodriguez</p>
-                                <p>> Fecha: 15/06/2026</p>
-                            </div>
-                        </div>
-
-                        <div class="event-card">
-                            <div class="event-header">ARTISTA : ID_02</div>
-                            <div class="event-info">
-                                <h3>Mentiras, El Musical</h3>
-                                <p>> Teatro Aldama</p>
-                                <p>> Disponibilidad: Alta</p>
-                            </div>
-                        </div>
-
-                        <div class="event-card">
-                            <div class="event-header">ARTISTA : ID_03</div>
-                            <div class="event-info">
-                                <h3>Zayn</h3>
-                                <p>> Estadio GNP Seguros</p>
-                                <p>> Estado: Preventa</p>
-                            </div>
-                        </div>
+    <div class="main-container">
+        
+        <div class="section-title">Lo Más Buscado</div>
+        <div class="tour-grid">
+            <%
+                List<concierto> tours = dao.listarTop4ToursCercanos();
+                if(tours != null && !tours.isEmpty()) {
+                    for(concierto t : tours) {
+            %>
+                <a href="conciertos.jsp?tour=<%= java.net.URLEncoder.encode(t.getnombre(), "UTF-8") %>" class="tour-card">
+                    <div class="tour-img" style="background-image: url('img/index/<%= t.getfotos() %>');"></div>
+                    <div class="tour-info">
+                        <p>Tour Oficial</p>
+                        <h3><%= t.getnombre() %></h3>
                     </div>
-                </div>
+                </a>
+            <% 
+                    }
+                } else { 
+            %>
+                <p style="color: #333; grid-column: 1 / -1;">No hay tours disponibles en este momento.</p>
+            <% } %>
+        </div>
 
-                <div class="sidebar">
-                    <div class="side-card">
-                        <h4>SISTEMA</h4>
-                        <p>Bienvenido al vendedor de boletos derrocador.</p>
-                    </div>
-                    <div class="side-card" style="border-color: var(--accent-pink);">
-                        <h4 style="color: #d81b60;">EXPERIENCIAS+</h4>
-                        <p>Consulta los paquetes VIP disponibles para ID_03.</p>
-                    </div>
-                </div>
-            </div>
-        <script>
-            function toggleMenu() {
-                alert("Abriendo menú de perfil...");
-            }
-        </script>
-
-    </body>
+        <div class="section-title">Artistas Tendencia</div>
+        <div class="trend-grid">
+            <%
+                artistaDAO artDao = new artistaDAO();
+                List<artista> tendencias = artDao.listarTop4Tendencia();
+                
+                if(tendencias != null && !tendencias.isEmpty()) {
+                    for(artista a : tendencias) {
+            %>
+                <a href="perfil_artista.jsp?id=<%= a.getID() %>" class="trend-card">
+                    <div class="trend-img" style="background-image: url('img/index/<%= a.getfoto() %>');"></div>
+                    <div class="trend-genre"><%= a.getgenero() %></div>
+                    <h3 class="trend-name"><%= a.getnombre() %></h3>
+                </a>
+            <% 
+                    }
+                } else { 
+            %>
+                <p style="color: #333; grid-column: 1 / -1;">No hay artistas en tendencia por el momento</p>
+            <% } %>
+        </div>
+    </div>
+</body>
 </html>
