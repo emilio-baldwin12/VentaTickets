@@ -202,6 +202,11 @@
             
             <% if(nombreUser != null) { %>
                 <li>
+                    <a href="seguidos.jsp" class="<%= (uri.endsWith("seguidos.jsp")) ? "active" : "" %>">
+                        MIS ARTISTAS
+                    </a>
+                </li>
+                <li>
                     <a href="miscompras.jsp" class="<%= (uri.endsWith("miscompras.jsp")) ? "active" : "" %>">
                         MIS COMPRAS
                     </a>

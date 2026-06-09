@@ -334,8 +334,11 @@
     </div>
 
     <div class="action-bar">
-        <button class="follow-btn <%= loSigue ? "siguiendo" : "" %>">
-            <%= loSigue ? "SIGUIENDO" : "SEGUIR" %>
+        <button id="btnSeguir" 
+                data-id="<%= a.getID() %>" 
+                data-estado="<%= loSigue ? "siguiendo" : "nosegue" %>"
+                style="padding: 10px 20px; background-color: <%= loSigue ? "#ccc" : "#FFB6C1" %>; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+            <%= loSigue ? "Siguiendo" : "Seguir" %>
         </button>
             <span style="color: <%= loSigue ? "#1DB954" : "white" %>; font-size: 30px;"></span>    
     </div>
@@ -421,15 +424,43 @@
         <p>Aun no hay reseñas para este artista.</p>
     </div>
 
-    <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tm-tabs li').forEach(t => t.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('t-' + tabId).classList.add('active');
-        }
-    </script>
+<script>
+    function switchTab(tabId) {
+        document.querySelectorAll('.tm-tabs li').forEach(li => li.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(div => div.classList.remove('active'));
+        document.getElementById('t-' + tabId).classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+    document.getElementById('btnSeguir').addEventListener('click', function() {
+        const btn = this;
+        const idArtista = btn.getAttribute('data-id');
+        const estadoActual = btn.getAttribute('data-estado');
+        const accion = (estadoActual === 'siguiendo') ? 'dejar' : 'seguir';
+
+        fetch('seguidorServlet', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'idArtista=' + idArtista + '&accion=' + accion
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'ok') {
+                // Cambiamos el color y texto del botón sin recargar la página
+                if(accion === 'seguir') {
+                    btn.setAttribute('data-estado', 'siguiendo');
+                    btn.innerText = 'Siguiendo';
+                    btn.style.backgroundColor = '#ccc'; // Color gris
+                } else {
+                    btn.setAttribute('data-estado', 'nosegue');
+                    btn.innerText = 'Seguir';
+                    btn.style.backgroundColor = '#FFB6C1'; // Tu rosa de acento
+                }
+            } else if (data.mensaje === 'no_logueado') {
+                window.location.href = 'login.jsp';
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

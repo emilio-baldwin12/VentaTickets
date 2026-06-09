@@ -18,6 +18,7 @@ public class filaDAO {
             if (redis.zrank(key, String.valueOf(idUsuario)) == null) {
                 double score = System.currentTimeMillis();
                 redis.zadd(key, score, String.valueOf(idUsuario));
+                redis.expire(key, 86400);
             }
         }
     }

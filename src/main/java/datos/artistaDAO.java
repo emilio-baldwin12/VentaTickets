@@ -239,4 +239,58 @@ public class artistaDAO {
         }
         return lista;
     }
+   
+   public boolean seguirArtista(int idUsuario, int idArtista) {
+        String sql = "Insert into Seguidores (id_usuario, id_artista) values (?, ?)";
+        try (Connection conn = config.conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            ps.setInt(2, idArtista);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al seguir artista: " + e.getMessage());
+            return false;
+        }
+    }
+   
+   public boolean dejarDeSeguir(int idUsuario, int idArtista) {
+        String sql = "Delete From Seguidores where id_usuario = ? and id_artista = ?";
+        try (Connection conn = config.conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            ps.setInt(2, idArtista);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al dejar de seguir: " + e.getMessage());
+            return false;
+        }
+    }
+   
+   public List<artista> obtenerArtistasSeguidos(int idUsuario) {
+        List<artista> lista = new ArrayList<>();
+        String sql = "Select u.id, u.nombre, u.apellido, a.genero, a.foto " +
+                     "From Usuarios u " +
+                     "join Artistas a on u.id = a.id_usuario " +
+                     "join Seguidores s on u.id = s.id_artista " +
+                     "where s.id_usuario = ?";
+                     
+        try (Connection conn = config.conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    artista art = new artista();
+                    art.setID(rs.getInt("id"));
+                    art.setnombre(rs.getString("nombre"));
+                    art.setapellido(rs.getString("apellido"));
+                    art.setgenero(rs.getString("genero"));
+                    art.setfoto(rs.getString("foto"));
+                    lista.add(art);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener seguidos: " + e.getMessage());
+        }
+        return lista;
+    }
 }
