@@ -166,7 +166,13 @@
                                     <%= p.getcantidad() %>
                                 </span>
                             </td>
-                            <td>
+                            <td style="display: flex; gap: 10px; align-items: center;">
+                                
+                                <a href="editar_producto.jsp?id=<%= p.getid() %>" 
+                                   style="background-color: #007bff; color: white; padding: 7px 12px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px;">
+                                   Editar
+                                </a>
+
                                 <form action="artista_productoServlet" method="POST" style="margin:0;" onsubmit="return confirm('¿Seguro que deseas eliminar este producto de la tienda?');">
                                     <input type="hidden" name="accion" value="eliminar">
                                     <input type="hidden" name="idProducto" value="<%= p.getid() %>">

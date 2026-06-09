@@ -150,6 +150,48 @@
         font-size: 10px;
         margin-left: 5px;
     }
+    
+    
+    
+    
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0; 
+        top: 100%; 
+        background-color: var(--entity-header);
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+        z-index: 2000;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    .dropdown-content a {
+        color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: 0.3s;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #333;
+        color: var(--accent-pink);
+    }
+
+    .show-dropdown {
+        display: block !important;
+    }
 </style>
 <header class="main-header">
     <div class="header-top">
@@ -157,24 +199,40 @@
             TICKETS
         </a>
         <div class="user-actions">
-            <a href="#" class="action-item search-btn">
-                BUSCAR ARTISTA O EVENTO
-            </a>
+            
             <a href="notificaciones.jsp" class="action-item">
                 NOTIFICACIONES
             </a>
-            <a href="#" class="action-item">
-                PERFIL 
-                <%= (nombreUser != null) ? "" : "" %></a>
+            
+            <% if(nombreUser == null) { %>
+                <a href="login.jsp" class="action-item">
+                    PERFIL
+                </a>
+            <% } else { %>
+                <div class="dropdown">
+                    <span id="btnPerfil" class="action-item" style="cursor: pointer;" onclick="toggleMenu()">
+                        PERFIL 
+                    </span>
+                    <div id="menuPerfil" class="dropdown-content">
+                        <a href="cerrarsesionServlet" style="color: #ff4444;">
+                            Cerrar Sesión
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+
             <a href="configuracion.jsp" class="action-item">
                 CONFIGURACIÓN
             </a>
+
             <% if(nombreUser == null) { %>
                 <a href="login.jsp" class="action-item" style="color: var(--accent-green)">
                     INGRESA
                 </a>
             <% } else { %>
-                <span class="action-item" style="color: var(--accent-pink)"><%= nombreUser.toUpperCase() %></span>
+                <span class="action-item" style="color: var(--accent-pink)">
+                    HOLA, <%= nombreUser.toUpperCase() %>
+                </span>
             <% } %>
         </div>
     </div>
@@ -250,20 +308,34 @@
         </ul>
     </nav>
         <script>
-            (function() {
-                const temaActual = localStorage.getItem('preferencia-tema') || 'tema-sadgirl';
-                const fuenteActual = localStorage.getItem('preferencia-fuente');
-
-                if (document.body) {
-                    document.body.classList.remove('tema-sadgirl', 'tema-showgirl', 'tema-fotos');
-                    document.body.classList.add(temaActual);
-
-                    if (fuenteActual === 'activa') {
-                        document.body.classList.add('fuente-dislexia');
-                    } else {
-                        document.body.classList.remove('fuente-dislexia');
+        function toggleMenu() {
+            document.getElementById("menuPerfil").classList.toggle("show-dropdown");
+        }
+        window.onclick = function(event) {
+            if (!event.target.matches('#btnPerfil')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show-dropdown')) {
+                        openDropdown.classList.remove('show-dropdown');
                     }
                 }
-            })();
-        </script>
+            }
+        }
+        (function() {
+            const temaActual = localStorage.getItem('preferencia-tema') || 'tema-sadgirl';
+            const fuenteActual = localStorage.getItem('preferencia-fuente');
+
+            if (document.body) {
+                document.body.classList.remove('tema-sadgirl', 'tema-showgirl', 'tema-fotos');
+                document.body.classList.add(temaActual);
+
+                if (fuenteActual === 'activa') {
+                    document.body.classList.add('fuente-dislexia');
+                } else {
+                    document.body.classList.remove('fuente-dislexia');
+                }
+            }
+        })();
+    </script>
 </header>

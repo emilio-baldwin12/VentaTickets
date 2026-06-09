@@ -4,6 +4,7 @@
  */
 package controlador;
 import datos.productosDAO;
+import modelo.producto;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -46,6 +47,19 @@ public class artista_productoServlet extends HttpServlet {
                     int idproducto=Integer.parseInt(request.getParameter("idProducto"));
                     boolean exitoEliminado=dao.eliminarProductos(idproducto, idartista);
                     response.sendRedirect(exitoEliminado ? "artista_productos.jsp?msg=eliminado" : "artista_productos,jsp?error=bd");
+                    break;
+                    
+                case "actualizar":
+                    producto p = new producto();
+                    p.setid(Integer.parseInt(request.getParameter("idProducto")));
+                    p.setnombre(request.getParameter("nombre"));
+                    p.setdescripcion(request.getParameter("descripcion"));
+                    p.setprecio(Double.parseDouble(request.getParameter("precio")));
+                    p.setcantidad(Integer.parseInt(request.getParameter("cantidad")));
+                    p.setfoto(request.getParameter("foto"));
+                    
+                    boolean exitoActualizar = dao.actualizarProducto(p);
+                    response.sendRedirect(exitoActualizar ? "artista_productos.jsp?msg=actualizado" : "artista_productos.jsp?error=bd");
                     break;
                     
                 case "bloqueado":

@@ -293,4 +293,43 @@ public class artistaDAO {
         }
         return lista;
     }
+   
+   public boolean actualizarArtista(artista art) {
+        boolean ok = false;
+        String sqlUsu = "Update Usuarios set nombre = ?, apellido = ? where id = ?";
+        String sqlArt = "update Artistas set descripcion = ?, genero = ?, foto = ?, banner = ? where id_usuario = ?";
+
+        try (Connection conn = config.conexion.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psUsu = conn.prepareStatement(sqlUsu);
+                 PreparedStatement psArt = conn.prepareStatement(sqlArt)) {
+
+                psUsu.setString(1, art.getnombre());
+                psUsu.setString(2, art.getapellido());
+                psUsu.setInt(3, art.getID());
+                int filasUsu = psUsu.executeUpdate();
+
+                psArt.setString(1, art.getdescripcion());
+                psArt.setString(2, art.getgenero());
+                psArt.setString(3, art.getfoto());
+                psArt.setString(4, art.getbanner());
+                psArt.setInt(5, art.getID()); 
+                int filasArt = psArt.executeUpdate();
+
+                if (filasUsu > 0 && filasArt > 0) {
+                    conn.commit();
+                    ok = true;
+                } else {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                conn.rollback();
+                System.out.println("Excepción durante la actualización doble: " + ex.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Error de conexión al actualizar artista: " + e.getMessage());
+        }
+        return ok;
+    }
 }

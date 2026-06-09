@@ -53,6 +53,20 @@ public class admin_artistaServlet extends HttpServlet {
                 response.sendRedirect(exitoEliminar ? "admin_artistas.jsp?msg=eliminado" : "admin_artistas.jsp?error=bd");
                 break;
                 
+            case "actualizar":
+                artista art = new artista();
+                art.setID(Integer.parseInt(request.getParameter("idUsuario")));
+                art.setnombre(request.getParameter("nombre"));
+                art.setapellido(request.getParameter("apellido"));
+                art.setgenero(request.getParameter("genero"));
+                art.setfoto(request.getParameter("foto"));
+                art.setbanner(request.getParameter("banner"));
+                art.setdescripcion(request.getParameter("descripcion"));
+                
+                boolean exitoActualizar = dao.actualizarArtista(art);
+                response.sendRedirect(exitoActualizar ? "admin_artistas.jsp?msg=actualizado" : "admin_artistas.jsp?error=bd");
+                break;
+                
             case "bloqueado":
                 response.sendRedirect("index.jsp");
                 break;

@@ -20,6 +20,7 @@ C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\d
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\modelo\productoCarrito.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\datos\solicitudDAO.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\controlador\admin_artistaServlet.java
+C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\controlador\cerrarsesionServlet.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\com\mycompany\ventatickets\resources\JakartaEE8Resource.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\modelo\cancion.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\datos\artistaDAO.java
@@ -34,6 +35,7 @@ C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\m
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\com\mycompany\ventatickets\JakartaRestConfiguration.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\datos\filaDAO.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\modelo\cliente.java
+C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\controlador\seguidorServlet.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\datos\carritoDAO.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\controlador\loginServlet.java
 C:\Users\luise\OneDrive\Documentos\NetBeansProjects\VentaTickets\src\main\java\controlador\artista_productoServlet.java

@@ -157,8 +157,14 @@
                             <td><%= a.getID() %></td>
                             <td><strong><%= a.getnombre() %> <%= a.getapellido() %></strong></td>
                             <td><%= a.getgenero() %></td>
-                            <td>
-                                <form action="admin_artistaServlet" method="POST" style="margin:0;" onsubmit="return confirm('¿Estás seguro de eliminar a este artista? Toda su información se perderá.');">
+                            <td style="display: flex; gap: 10px; align-items: center;">
+                                
+                                <a href="editar_artista.jsp?id=<%= a.getID() %>" 
+                                   style="background-color: #007bff; color: white; padding: 7px 12px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px;">
+                                   Editar
+                                </a>
+
+                                <form action="admin_artistaServlet" method="POST" style="margin:0;" onsubmit="return confirm('¿Estás seguro de eliminar a este artista? Toda su información se perderá');">
                                     <input type="hidden" name="accion" value="eliminar">
                                     <input type="hidden" name="idUsuario" value="<%= a.getID() %>">
                                     <button type="submit" class="btn-delete">Eliminar</button>
